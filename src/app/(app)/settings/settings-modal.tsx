@@ -98,7 +98,9 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
 
   const handleNameBlur = () => {
     if (displayName.trim() && displayName.trim() !== profile?.displayName) {
-      startTransition(() => updateProfile({ displayName: displayName.trim() }));
+      startTransition(() => {
+        updateProfile({ displayName: displayName.trim() });
+      });
     }
   };
 
@@ -122,7 +124,9 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
       if (!uploadError) {
         const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(path);
         setAvatarUrl(publicUrl);
-        startTransition(() => updateProfile({ avatarUrl: publicUrl }));
+        startTransition(() => {
+          updateProfile({ avatarUrl: publicUrl });
+        });
       }
     } finally {
       setUploading(false);
