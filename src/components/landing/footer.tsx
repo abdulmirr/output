@@ -2,7 +2,22 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { Sun, Moon } from 'lucide-react';
+import { useThemeStore } from '@/stores/theme-store';
+
 export function Footer() {
+  const { theme, setTheme } = useThemeStore();
+
+  const isDark =
+    theme === 'dark' ||
+    (theme === 'system' &&
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+  const toggle = () => {
+    setTheme(isDark ? 'light' : 'dark');
+  };
+
   return (
     <footer className="py-8">
       <div className="mx-auto max-w-5xl px-6 flex items-center justify-between">
@@ -17,6 +32,13 @@ export function Footer() {
           >
             Privacy
           </Link>
+          <button
+            onClick={toggle}
+            className="text-muted-foreground hover:text-foreground transition-colors px-1"
+            aria-label="Toggle theme"
+          >
+            {isDark ? <Moon className="h-3.5 w-3.5" /> : <Sun className="h-3.5 w-3.5" />}
+          </button>
           <Link
             href="/termsofservice"
             className="text-xs text-muted-foreground hover:text-foreground transition-colors"

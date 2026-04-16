@@ -16,14 +16,14 @@ export function HeroSection() {
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.08]">
               Track your output.
               <br />
-              <span className="font-medium text-muted-foreground/60 tracking-normal">Cultivate deep work.</span>
+              <span className="font-medium text-muted-foreground/60 tracking-normal">Enter deep work.</span>
             </h1>
           </div>
         </FadeIn>
 
         <FadeIn delay={120}>
           <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-xl leading-relaxed">
-            Start a work block, rate your focus, and see what you actually get done.
+            Start a work block, rate your focus, see what you get done.
           </p>
         </FadeIn>
 
