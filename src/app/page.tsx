@@ -4,8 +4,8 @@ import { LandingNav } from "@/components/landing/landing-nav";
 import { HeroSection } from "@/components/landing/hero-section";
 import { ShowcaseSection } from "@/components/landing/showcase-section";
 import { PlatformBanner } from "@/components/landing/platform-banner";
-import { FinalCTA } from "@/components/landing/final-cta";
 import { Footer } from "@/components/landing/footer";
+import { BackgroundGrid } from "@/components/ui/background-snippets";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -16,12 +16,12 @@ export default async function Home() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="relative min-h-screen">
+      <BackgroundGrid />
       <LandingNav />
       <HeroSection />
       <ShowcaseSection />
       <PlatformBanner />
-      <FinalCTA />
       <Footer />
     </div>
   );
