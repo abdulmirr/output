@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import Image from 'next/image';
 import { Sun, Moon } from 'lucide-react';
 import { useThemeStore } from '@/stores/theme-store';
@@ -25,6 +26,18 @@ export function Footer() {
           <span className="text-sm font-medium">Output</span>
         </div>
         <div className="flex items-center gap-4">
+          <Link
+            href="/privacypolicy"
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Privacy
+          </Link>
+          <Link
+            href="/termsofservice"
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Terms
+          </Link>
           <button
             onClick={toggle}
             className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"

@@ -31,17 +31,17 @@ export function HeroSection() {
           <div className="mt-10 flex items-center gap-4">
             <Link
               href="/signup"
-              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity"
+              className="inline-flex items-center justify-center gap-2 bg-foreground text-background px-7 py-3 rounded-md text-sm font-medium hover:bg-foreground/90 transition-all shadow-sm"
             >
-              Get started — it&apos;s free
-              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+              Get started
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12h14" />
                 <path d="m12 5 7 7-7 7" />
               </svg>
             </Link>
             <Link
               href="/login"
-              className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-4 py-3"
+              className="inline-flex items-center justify-center gap-2 border border-border bg-background hover:bg-muted text-foreground px-7 py-3 rounded-md text-sm font-medium transition-colors"
             >
               Log in
             </Link>
@@ -61,17 +61,11 @@ export function HeroSection() {
 
 function HeroMockup() {
   const blocks = [
-    { label: 'Deep work — product build', time: '9:00 – 10:45', duration: '1h 45m', rating: 'Deep' as const },
-    { label: 'Code review + PR feedback', time: '11:00 – 11:45', duration: '45m', rating: 'Okay' as const },
-    { label: 'Research competitor pricing', time: '1:00 – 1:30', duration: '30m', rating: 'Shallow' as const },
-    { label: 'Landing page redesign', time: '2:15 – 3:25', duration: '1h 10m', rating: 'Deep' as const },
+    { title: 'Deep work — product build', duration: '1h 45m', rating: 'deep', ratingColor: 'text-green-500' },
+    { title: 'Code review + PR feedback', duration: '45m', rating: 'ok', ratingColor: 'text-yellow-500' },
+    { title: 'Research competitor pricing', duration: '30m', rating: 'distracted', ratingColor: 'text-orange-500' },
+    { title: 'Landing page redesign', duration: '1h 10m', rating: 'deep', ratingColor: 'text-green-500' },
   ];
-
-  const ratingDot: Record<string, string> = {
-    Deep: 'bg-green-500',
-    Okay: 'bg-yellow-500',
-    Shallow: 'bg-red-500',
-  };
 
   return (
     <div className="rounded-2xl border border-border bg-card/80 backdrop-blur-sm shadow-2xl shadow-black/5 dark:shadow-black/20 overflow-hidden">
@@ -97,22 +91,23 @@ function HeroMockup() {
           </div>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           {blocks.map((b, i) => (
             <div
-              key={b.label}
-              className="flex items-center justify-between rounded-xl border border-border bg-background/60 px-4 py-3 transition-all duration-300 hover:shadow-md hover:-translate-y-px"
+              key={b.title}
+              className="flex items-start gap-3 py-3 group hover:bg-foreground/[0.03] rounded-md px-2 -mx-2 transition-colors opacity-0 animate-in fade-in slide-in-from-bottom-2 fill-mode-forwards"
               style={{ animationDelay: `${i * 100}ms` }}
             >
-              <div className="flex items-center gap-3 min-w-0">
-                <div className={`h-2 w-2 rounded-full ${ratingDot[b.rating]} shrink-0`} />
-                <div className="min-w-0">
-                  <div className="text-sm font-medium truncate">{b.label}</div>
-                  <div className="text-[11px] text-muted-foreground">{b.time}</div>
-                </div>
+              <div className="text-sm text-muted-foreground font-mono w-28 shrink-0 pt-0.5 select-none">
+                {b.duration}
               </div>
-              <div className="flex items-center gap-3 shrink-0 ml-4">
-                <span className="text-xs text-muted-foreground font-medium">{b.duration}</span>
+              <div className="w-24 shrink-0 pt-0.5">
+                <span className={`text-sm font-mono select-none ${b.ratingColor}`}>
+                  {b.rating}
+                </span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-base font-light whitespace-pre-wrap break-words">{b.title}</p>
               </div>
             </div>
           ))}

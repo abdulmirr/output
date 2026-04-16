@@ -71,16 +71,11 @@ export function ShowcaseSection() {
 
 function DepthRatingMockup() {
   const blocks = [
-    { label: 'Deep work building product', duration: '1h 45m', rating: 'Deep' as const },
-    { label: 'Code review + PR feedback', duration: '45m', rating: 'Okay' as const },
-    { label: 'Slack + email triage', duration: '30m', rating: 'Shallow' as const },
-    { label: 'Landing page polish', duration: '1h 10m', rating: 'Deep' as const },
+    { title: 'Deep work building product', duration: '1h 45m', rating: 'deep', ratingColor: 'text-green-500' },
+    { title: 'Code review + PR feedback', duration: '45m', rating: 'ok', ratingColor: 'text-yellow-500' },
+    { title: 'Slack + email triage', duration: '30m', rating: 'wasted', ratingColor: 'text-red-500' },
+    { title: 'Landing page polish', duration: '1h 10m', rating: 'deep', ratingColor: 'text-green-500' },
   ];
-  const ratingStyles = {
-    Deep: 'bg-green-500/15 text-green-500 border-green-500/30',
-    Okay: 'bg-yellow-500/15 text-yellow-500 border-yellow-500/30',
-    Shallow: 'bg-red-500/15 text-red-500 border-red-500/30',
-  };
   return (
     <div className="rounded-xl border border-border bg-card p-6 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5">
       <div className="flex items-baseline justify-between mb-5">
@@ -89,27 +84,23 @@ function DepthRatingMockup() {
           <span className="text-foreground font-semibold">2h 55m</span> deep · 4h 10m total
         </div>
       </div>
-      <div className="space-y-2">
+      <div className="space-y-1">
         {blocks.map((b) => (
           <div
-            key={b.label}
-            className="flex items-center justify-between rounded-lg border border-border bg-background/50 px-3 py-2.5"
+            key={b.title}
+            className="flex items-start gap-3 py-3 group hover:bg-foreground/[0.03] rounded-md px-2 -mx-2 transition-colors"
           >
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="h-7 w-7 rounded-md bg-muted flex items-center justify-center shrink-0">
-                <svg className="h-3.5 w-3.5 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                  <circle cx="12" cy="12" r="10" />
-                  <polyline points="12 6 12 12 16 14" />
-                </svg>
-              </div>
-              <div className="min-w-0">
-                <div className="text-sm font-medium truncate">{b.label}</div>
-                <div className="text-[11px] text-muted-foreground">{b.duration}</div>
-              </div>
+            <div className="text-sm text-muted-foreground font-mono w-24 shrink-0 pt-0.5 select-none text-left">
+              {b.duration}
             </div>
-            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${ratingStyles[b.rating]}`}>
-              {b.rating}
-            </span>
+            <div className="w-20 shrink-0 pt-0.5 text-left">
+              <span className={`text-sm font-mono select-none ${b.ratingColor}`}>
+                {b.rating}
+              </span>
+            </div>
+            <div className="flex-1 min-w-0 text-left">
+              <p className="text-base font-light whitespace-pre-wrap break-words">{b.title}</p>
+            </div>
           </div>
         ))}
       </div>
