@@ -15,7 +15,6 @@ export function SettingsForm() {
         <div className="flex gap-3">
           {([
             { value: 'light-grid' as const, label: 'Light Grid' },
-            { value: 'dark-grid' as const, label: 'Dark Grid' },
             { value: 'light' as const, label: 'Light' },
             { value: 'dark' as const, label: 'Dark' },
           ]).map((t) => (

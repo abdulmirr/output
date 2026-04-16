@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type Theme = 'light-grid' | 'dark-grid' | 'light' | 'dark';
+export type Theme = 'light-grid' | 'light' | 'dark';
 
 interface ThemeState {
   theme: Theme;
@@ -9,11 +9,11 @@ interface ThemeState {
 }
 
 export function isDarkTheme(theme: Theme): boolean {
-  return theme === 'dark' || theme === 'dark-grid';
+  return theme === 'dark';
 }
 
 export function isGridTheme(theme: Theme): boolean {
-  return theme === 'light-grid' || theme === 'dark-grid';
+  return theme === 'light-grid';
 }
 
 function applyTheme(theme: Theme) {

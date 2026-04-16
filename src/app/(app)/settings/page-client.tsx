@@ -182,7 +182,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
     });
   };
 
-  const handleTheme = (t: 'light-grid' | 'dark-grid' | 'light' | 'dark') => {
+  const handleTheme = (t: 'light-grid' | 'light' | 'dark') => {
     setTheme(t);
     startTransition(() => {
       updateProfile({ theme: t });
@@ -343,7 +343,6 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
           <div className="flex items-center gap-1.5">
             {([
               { value: 'light-grid' as const, label: 'Light Grid' },
-              { value: 'dark-grid' as const, label: 'Dark Grid' },
               { value: 'light' as const, label: 'Light' },
               { value: 'dark' as const, label: 'Dark' },
             ]).map((t) => (
