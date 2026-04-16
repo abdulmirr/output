@@ -27,7 +27,6 @@ import {
   CollisionDetection,
 } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
-import { cn } from '@/lib/utils';
 
 interface TasksPageClientProps {
   initialTasks: Task[];
@@ -198,10 +197,7 @@ export function TasksPageClient({
 
   return (
     <div
-      className={cn(
-        'space-y-4 max-w-[640px] mx-auto transition-[margin] duration-200 ease-in-out',
-        selectedTaskId && 'mr-72'
-      )}
+      className="space-y-4 max-w-[640px] mx-auto"
     >
       <DndContext
         sensors={sensors}
