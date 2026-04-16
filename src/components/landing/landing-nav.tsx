@@ -29,6 +29,20 @@ export function LandingNav() {
           <span className="text-2xl font-semibold tracking-tight">Output</span>
         </Link>
 
+        <div className="flex items-center gap-3">
+          <Link
+            href="/login"
+            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Log in
+          </Link>
+          <Link
+            href="/signup"
+            className="text-sm font-medium bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:opacity-90 transition-opacity"
+          >
+            Get started
+          </Link>
+        </div>
       </div>
     </nav>
   );

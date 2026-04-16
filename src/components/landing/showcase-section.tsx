@@ -4,17 +4,17 @@ export function ShowcaseSection() {
   return (
     <section className="py-24 md:py-32 border-t border-border">
       <div className="mx-auto max-w-5xl px-6 space-y-24 md:space-y-32">
-        {/* Row 1: Text left, Visual right */}
+        {/* Row 1: Work Blocks */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
           <FadeIn>
             <div className="space-y-4">
               <h3 className="text-2xl md:text-3xl font-bold tracking-tight">
-                Keyboard-first workflow
+                Start a work block in seconds
               </h3>
               <p className="text-muted-foreground leading-relaxed">
-                Hit a shortcut to open the work block overlay. Type what you&apos;re
-                working on, choose stopwatch or countdown, and press Enter. When
-                you&apos;re done, rate your focus and move on. No clicking through menus.
+                Open the overlay, name what you&apos;re building, choose stopwatch
+                or timer, and go. When you&apos;re done, rate your depth. No
+                menus, no friction.
               </p>
               <div className="flex flex-wrap gap-2 pt-2">
                 <StepBadge step="1" label="Open overlay" />
@@ -28,7 +28,7 @@ export function ShowcaseSection() {
           </FadeIn>
         </div>
 
-        {/* Row 2: Outputs stacking up */}
+        {/* Row 2: Depth Rating */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
           <FadeIn className="order-2 md:order-1">
             <DepthRatingMockup />
@@ -36,28 +36,27 @@ export function ShowcaseSection() {
           <FadeIn delay={150} className="order-1 md:order-2">
             <div className="space-y-4">
               <h3 className="text-2xl md:text-3xl font-bold tracking-tight">
-                Know how deep you actually went
+                See the quality, not just the quantity
               </h3>
               <p className="text-muted-foreground leading-relaxed">
-                Rate every work block — shallow, okay, or deep — the moment you
-                finish it. At the end of the day you don&apos;t just see hours
-                logged, you see how many of them were actually productive.
+                Every session gets a depth rating — deep, okay, or shallow. At
+                the end of the day, you don&apos;t just see hours. You see how
+                many of them actually mattered.
               </p>
             </div>
           </FadeIn>
         </div>
 
-        {/* Row 3: Tasks page */}
+        {/* Row 3: Tasks */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
           <FadeIn>
             <div className="space-y-4">
               <h3 className="text-2xl md:text-3xl font-bold tracking-tight">
-                Capture tasks the second they hit you
+                Capture tasks without breaking flow
               </h3>
               <p className="text-muted-foreground leading-relaxed">
-                Hit ⌘⇧N from anywhere on your desktop to drop a task straight
-                into your inbox. No app switching, no losing the thought —
-                just type it and get back to what you were doing.
+                Open the quick-add from anywhere. Drop a task into your inbox and
+                get back to work. No app switching, no context lost.
               </p>
             </div>
           </FadeIn>
@@ -83,7 +82,7 @@ function DepthRatingMockup() {
     Shallow: 'bg-red-500/15 text-red-500 border-red-500/30',
   };
   return (
-    <div className="rounded-xl border border-border bg-card p-6 shadow-lg">
+    <div className="rounded-xl border border-border bg-card p-6 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5">
       <div className="flex items-baseline justify-between mb-5">
         <h2 className="text-[18px] font-semibold tracking-[-0.02em]">Today</h2>
         <div className="text-xs text-muted-foreground">
@@ -127,7 +126,7 @@ function TasksInboxMockup() {
     'Review pricing page copy',
   ];
   return (
-    <div className="rounded-xl border border-border bg-card p-6 shadow-lg">
+    <div className="rounded-xl border border-border bg-card p-6 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5">
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2">
           <svg className="h-4 w-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -168,7 +167,7 @@ function StepBadge({ step, label }: { step: string; label: string }) {
 
 function WorkBlockMockup() {
   return (
-    <div className="rounded-xl border border-border bg-card p-6 shadow-lg">
+    <div className="rounded-xl border border-border bg-card p-6 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5">
       <div className="space-y-6 mt-2">
         <div className="space-y-2">
           <h2 className="text-[18px] font-semibold tracking-[-0.02em]">Start work block</h2>

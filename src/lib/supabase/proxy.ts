@@ -49,6 +49,8 @@ export async function updateSession(request: NextRequest) {
     !pathname.startsWith('/forgot-password') &&
     !pathname.startsWith('/auth') &&
     !pathname.startsWith('/waitlist') &&
+    !pathname.startsWith('/privacypolicy') &&
+    !pathname.startsWith('/termsofservice') &&
     pathname !== '/'
   ) {
     // No user and trying to access protected route — redirect to login
