@@ -1,5 +1,6 @@
 import { BackgroundGrid } from "@/components/ui/background-snippets";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -9,11 +10,9 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       </div>
       
       <div className="absolute top-8 left-8 z-20">
-        <Link href="/" className="text-xl font-bold tracking-tighter hover:opacity-80 transition-opacity flex items-center gap-2">
-          <div className="w-5 h-5 bg-foreground rounded-sm flex items-center justify-center">
-            <div className="w-1.5 h-1.5 bg-background rounded-full" />
-          </div>
-          Output
+        <Link href="/" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
+          <Image src="/output-logo.svg" alt="Output" width={26} height={28} className="h-7 w-auto" />
+          <span className="text-2xl font-semibold tracking-tight">Output</span>
         </Link>
       </div>
 
