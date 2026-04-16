@@ -36,9 +36,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-2 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
+    <div className="rounded-2xl border border-border/50 bg-card/60 backdrop-blur-xl shadow-2xl shadow-black/5 dark:shadow-black/20 p-8 sm:p-10 space-y-7 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="space-y-2 text-center mb-2">
+        <h1 className="text-3xl font-semibold tracking-tight">Welcome back</h1>
         <p className="text-sm text-muted-foreground">
           Sign in to your account to continue
         </p>
