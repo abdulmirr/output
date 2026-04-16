@@ -9,7 +9,7 @@ export function PlatformBanner() {
         <FadeIn>
           <div className="text-center mb-12">
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
-              Where you work.
+              Desktop & Mobile coming soon...
             </h2>
             <p className="mt-2 text-muted-foreground text-sm max-w-md mx-auto">
               Start on the web today. Native apps are on the roadmap.

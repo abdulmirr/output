@@ -4,9 +4,23 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
+import { Sun, Moon } from 'lucide-react';
+import { useThemeStore } from '@/stores/theme-store';
 
 export function LandingNav() {
   const [scrolled, setScrolled] = useState(false);
+
+  const { theme, setTheme } = useThemeStore();
+
+  const isDark =
+    theme === 'dark' ||
+    (theme === 'system' &&
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+  const toggle = () => {
+    setTheme(isDark ? 'light' : 'dark');
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -30,6 +44,13 @@ export function LandingNav() {
         </Link>
 
         <div className="flex items-center gap-3">
+          <button
+            onClick={toggle}
+            className="p-2 text-muted-foreground hover:text-foreground transition-colors mr-1"
+            aria-label="Toggle theme"
+          >
+            {isDark ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+          </button>
           <Link
             href="/login"
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-2"
