@@ -66,7 +66,7 @@ export interface UserProfile {
   email: string;
   displayName: string | null;
   avatarUrl: string | null;
-  theme: 'light' | 'dark' | 'system';
+  theme: 'light-grid' | 'dark-grid' | 'light' | 'dark';
   createdAt: Date;
   role: UserRole | null;
   dailyGoalHours: number;

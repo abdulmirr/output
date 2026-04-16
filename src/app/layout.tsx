@@ -27,7 +27,7 @@ export default function RootLayout({
           id="theme-init"
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
-            __html: `try{var s=localStorage.getItem('output-theme');if(s){var d=JSON.parse(s);var t=d&&d.state&&d.state.theme;if(t==='dark')document.documentElement.classList.add('dark');else if(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark')}}catch(e){}`,
+            __html: `try{var s=localStorage.getItem('output-theme');if(s){var d=JSON.parse(s);var t=d&&d.state&&d.state.theme;if(t==='dark'||t==='dark-grid')document.documentElement.classList.add('dark');if(t==='light-grid'||t==='dark-grid')document.documentElement.classList.add('grid-bg')}}catch(e){}`,
           }}
         />
         {children}

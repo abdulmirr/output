@@ -3,19 +3,20 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Sun, Moon } from 'lucide-react';
-import { useThemeStore } from '@/stores/theme-store';
+import { useThemeStore, isDarkTheme, isGridTheme } from '@/stores/theme-store';
 
 export function Footer() {
   const { theme, setTheme } = useThemeStore();
 
-  const isDark =
-    theme === 'dark' ||
-    (theme === 'system' &&
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const isDark = isDarkTheme(theme);
+  const hasGrid = isGridTheme(theme);
 
   const toggle = () => {
-    setTheme(isDark ? 'light' : 'dark');
+    if (isDark) {
+      setTheme(hasGrid ? 'light-grid' : 'light');
+    } else {
+      setTheme(hasGrid ? 'dark-grid' : 'dark');
+    }
   };
 
   return (

@@ -7,7 +7,7 @@ import { z } from 'zod';
 
 const UpdateProfileSchema = z.object({
   displayName: z.string().min(1).max(100).optional(),
-  theme: z.enum(['light', 'dark', 'system']).optional(),
+  theme: z.enum(['light-grid', 'dark-grid', 'light', 'dark']).optional(),
   avatarUrl: z.string().url().optional(),
   role: z
     .enum(['founder', 'developer', 'designer', 'student', 'creator', 'other'])
@@ -18,7 +18,7 @@ const UpdateProfileSchema = z.object({
 
 export async function updateProfile(data: {
   displayName?: string;
-  theme?: 'light' | 'dark' | 'system';
+  theme?: 'light-grid' | 'dark-grid' | 'light' | 'dark';
   avatarUrl?: string;
   role?: 'founder' | 'developer' | 'designer' | 'student' | 'creator' | 'other';
   dailyGoalHours?: number;

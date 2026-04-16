@@ -13,18 +13,23 @@ export function SettingsForm() {
       <div className="space-y-3">
         <h3 className="text-sm font-medium">Appearance</h3>
         <div className="flex gap-3">
-          {(['light', 'dark', 'system'] as const).map((t) => (
+          {([
+            { value: 'light-grid' as const, label: 'Light Grid' },
+            { value: 'dark-grid' as const, label: 'Dark Grid' },
+            { value: 'light' as const, label: 'Light' },
+            { value: 'dark' as const, label: 'Dark' },
+          ]).map((t) => (
             <button
-              key={t}
-              onClick={() => setTheme(t)}
+              key={t.value}
+              onClick={() => setTheme(t.value)}
               className={cn(
-                'flex-1 rounded-lg border p-3 text-sm font-medium text-center transition-colors capitalize',
-                theme === t
+                'flex-1 rounded-lg border p-3 text-sm font-medium text-center transition-colors',
+                theme === t.value
                   ? 'border-primary bg-primary/5 text-primary'
                   : 'border-border hover:bg-muted'
               )}
             >
-              {t}
+              {t.label}
             </button>
           ))}
         </div>

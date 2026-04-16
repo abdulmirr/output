@@ -1,25 +1,31 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-type Theme = 'light' | 'dark' | 'system';
+export type Theme = 'light-grid' | 'dark-grid' | 'light' | 'dark';
 
 interface ThemeState {
   theme: Theme;
   setTheme: (theme: Theme) => void;
 }
 
+export function isDarkTheme(theme: Theme): boolean {
+  return theme === 'dark' || theme === 'dark-grid';
+}
+
+export function isGridTheme(theme: Theme): boolean {
+  return theme === 'light-grid' || theme === 'dark-grid';
+}
+
 function applyTheme(theme: Theme) {
   if (typeof window === 'undefined') return;
-  const isDark =
-    theme === 'dark' ||
-    (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  document.documentElement.classList.toggle('dark', isDark);
+  document.documentElement.classList.toggle('dark', isDarkTheme(theme));
+  document.documentElement.classList.toggle('grid-bg', isGridTheme(theme));
 }
 
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
-      theme: 'light',
+      theme: 'light-grid',
       setTheme: (theme) => {
         applyTheme(theme);
         set({ theme });

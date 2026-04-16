@@ -218,7 +218,7 @@ function mapProfile(row: any): UserProfile {
     email: row.email,
     displayName: row.display_name,
     avatarUrl: row.avatar_url,
-    theme: row.theme || 'system',
+    theme: row.theme || 'light-grid',
     createdAt: new Date(row.created_at),
     role: row.role ?? null,
     dailyGoalHours: row.daily_goal_hours ?? 4,

@@ -182,7 +182,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
     });
   };
 
-  const handleTheme = (t: 'light' | 'dark' | 'system') => {
+  const handleTheme = (t: 'light-grid' | 'dark-grid' | 'light' | 'dark') => {
     setTheme(t);
     startTransition(() => {
       updateProfile({ theme: t });
@@ -341,19 +341,24 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
 
         <Row label="Theme" caption="Choose how Output looks.">
           <div className="flex items-center gap-1.5">
-            {(['light', 'dark', 'system'] as const).map((t) => (
+            {([
+              { value: 'light-grid' as const, label: 'Light Grid' },
+              { value: 'dark-grid' as const, label: 'Dark Grid' },
+              { value: 'light' as const, label: 'Light' },
+              { value: 'dark' as const, label: 'Dark' },
+            ]).map((t) => (
               <button
-                key={t}
+                key={t.value}
                 type="button"
-                onClick={() => handleTheme(t)}
+                onClick={() => handleTheme(t.value)}
                 className={cn(
-                  'px-3 py-1 rounded-full text-xs capitalize transition-colors ring-1',
-                  theme === t
+                  'px-3 py-1 rounded-full text-xs transition-colors ring-1',
+                  theme === t.value
                     ? 'ring-foreground/30 bg-foreground/[0.04] font-normal text-foreground'
                     : 'ring-foreground/10 font-light text-foreground/60 hover:bg-foreground/[0.04] hover:text-foreground'
                 )}
               >
-                {t}
+                {t.label}
               </button>
             ))}
           </div>
