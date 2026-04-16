@@ -34,7 +34,7 @@ export function ThoughtsSection({ initialThoughts, today }: ThoughtsSectionProps
       <div className="relative">
         <button
           onClick={() => setOpen((o) => !o)}
-          className="absolute -left-5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+          className="absolute -left-5 top-1/2 -translate-y-1/2 text-foreground/20 hover:text-foreground/40 transition-colors"
         >
           {open
             ? <ChevronDown className="h-4 w-4" />
@@ -42,10 +42,10 @@ export function ThoughtsSection({ initialThoughts, today }: ThoughtsSectionProps
           }
         </button>
         <h3
-          className="text-[18px] font-semibold text-foreground tracking-[-0.02em] cursor-pointer hover:opacity-80 transition-opacity"
+          className="text-sm font-normal uppercase tracking-wider text-foreground/70 cursor-pointer hover:text-foreground/90 transition-colors"
           onClick={() => setOpen((o) => !o)}
         >
-          Thoughts:
+          Thoughts
         </h3>
       </div>
       {open && (
@@ -53,7 +53,7 @@ export function ThoughtsSection({ initialThoughts, today }: ThoughtsSectionProps
           value={thoughts}
           onChange={(e) => handleChange(e.target.value)}
           placeholder="jot down any thoughts as you work..."
-          className="min-h-[100px] resize-none text-sm border-0 shadow-none focus-visible:ring-0 px-0 bg-transparent dark:bg-transparent"
+          className="min-h-[100px] resize-none text-base font-light leading-relaxed border-0 shadow-none focus-visible:ring-0 px-0 bg-transparent dark:bg-transparent placeholder:text-foreground/20"
           autoFocus={!initialThoughts}
         />
       )}

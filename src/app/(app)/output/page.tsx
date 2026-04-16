@@ -1,4 +1,4 @@
-import { getBlocksForDate, getDailyLog, getTodosForDate, getProfile, getHasAnyTask, getHasAnyBlock } from '@/lib/api/queries';
+import { getBlocksForDate, getDailyLog, getTodosForDate } from '@/lib/api/queries';
 import { getTodayString } from '@/lib/utils';
 import { getTzOffsetMinutes } from '@/lib/tz';
 import { OutputPageClient } from './page-client';
@@ -13,18 +13,11 @@ export default async function OutputPage({
   const { date: dateParam } = await searchParams;
   const date = dateParam ?? today;
 
-  const [blocks, dailyLog, todos, profile, hasTasks, hasAnyBlock] = await Promise.all([
+  const [blocks, dailyLog, todos] = await Promise.all([
     getBlocksForDate(date, tzOffset),
     getDailyLog(date),
     getTodosForDate(date),
-    getProfile(),
-    getHasAnyTask(),
-    getHasAnyBlock(),
   ]);
-
-  const hasCompletedFirstBlock = (profile?.hasCompletedFirstBlock ?? false) || hasAnyBlock;
-  const showFirstRunBanner = profile ? !hasCompletedFirstBlock : false;
-  const showChecklist = profile ? !profile.onboardingChecklistDismissed : false;
 
   return (
     <OutputPageClient
@@ -33,11 +26,6 @@ export default async function OutputPage({
       initialDailyLog={dailyLog}
       initialTodos={todos}
       date={date}
-      showFirstRunBanner={showFirstRunBanner}
-      showChecklist={showChecklist}
-      hasCompletedFirstBlock={hasCompletedFirstBlock}
-      hasTasks={hasTasks}
-      hasLoggedOffToday={dailyLog?.loggedOff ?? false}
     />
   );
 }

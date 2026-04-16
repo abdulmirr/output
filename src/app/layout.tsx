@@ -7,6 +7,12 @@ export const metadata: Metadata = {
   title: "Output - Track Your Deep Work",
   description:
     "A minimal productivity app for tracking focused work sessions, managing tasks, and reflecting on your daily output.",
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+  },
 };
 
 export default function RootLayout({

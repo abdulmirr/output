@@ -8,15 +8,14 @@ import { NotesDialog } from '@/components/tasks/notes-dialog';
 import { DateDialog } from '@/components/tasks/date-dialog';
 import { useOverlayStore } from '@/stores/overlay-store';
 import { useWorkBlockStore } from '@/stores/work-block-store';
-import { StoreProvider } from '@/stores/store-provider';
 import { ThemeApplier } from './theme-applier';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
-    <StoreProvider>
+    <>
       <ThemeApplier />
       <AppShellInner>{children}</AppShellInner>
-    </StoreProvider>
+    </>
   );
 }
 

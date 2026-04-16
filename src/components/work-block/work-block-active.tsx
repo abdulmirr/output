@@ -14,6 +14,7 @@ interface WorkBlockActiveProps {
   onDiscard: () => void;
   onMinimize: () => void;
   onStartTimeChange: (newStartTime: number) => void;
+  onTitleChange: (newTitle: string) => void;
 }
 
 function formatStartTime(ts: number) {
@@ -37,17 +38,34 @@ export function WorkBlockActive({
   onDiscard,
   onMinimize,
   onStartTimeChange,
+  onTitleChange,
 }: WorkBlockActiveProps) {
   const [editing, setEditing] = useState(false);
   const [inputValue, setInputValue] = useState(toTimeInputValue(startTime));
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const [editingTitle, setEditingTitle] = useState(false);
+  const [titleValue, setTitleValue] = useState(title);
+  const titleInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     if (editing) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional reset when entering edit mode
       setInputValue(toTimeInputValue(startTime));
       setTimeout(() => inputRef.current?.focus(), 0);
     }
   }, [editing, startTime]);
+
+  useEffect(() => {
+    if (editingTitle) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional reset when entering edit mode
+      setTitleValue(title);
+      setTimeout(() => {
+        titleInputRef.current?.focus();
+        titleInputRef.current?.select();
+      }, 0);
+    }
+  }, [editingTitle, title]);
 
   const handleConfirm = () => {
     const [h, m] = inputValue.split(':').map(Number);
@@ -71,6 +89,19 @@ export function WorkBlockActive({
     if (e.key === 'Escape') setEditing(false);
   };
 
+  const handleTitleConfirm = () => {
+    const trimmed = titleValue.trim();
+    if (trimmed && trimmed !== title) {
+      onTitleChange(trimmed);
+    }
+    setEditingTitle(false);
+  };
+
+  const handleTitleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') handleTitleConfirm();
+    if (e.key === 'Escape') setEditingTitle(false);
+  };
+
   return (
     <div className="space-y-6">
       <button
@@ -83,7 +114,33 @@ export function WorkBlockActive({
 
       <div className="text-center space-y-1">
         <p className="text-sm text-muted-foreground">Working on</p>
-        <h2 className="text-[18px] font-semibold tracking-[-0.02em]">{title}</h2>
+        {editingTitle ? (
+          <div className="flex items-center justify-center gap-1">
+            <input
+              ref={titleInputRef}
+              type="text"
+              value={titleValue}
+              onChange={(e) => setTitleValue(e.target.value)}
+              onKeyDown={handleTitleKeyDown}
+              className="text-lg font-light text-center bg-muted border border-border rounded px-2 py-0.5 focus:outline-none focus:ring-1 focus:ring-ring min-w-0 max-w-full"
+            />
+            <button
+              onClick={handleTitleConfirm}
+              className="p-0.5 rounded text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Confirm"
+            >
+              <Check className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setEditingTitle(true)}
+            className="inline-flex items-center gap-1.5 text-lg font-light hover:text-muted-foreground transition-colors group"
+          >
+            {title}
+            <Pencil className="h-3 w-3 opacity-0 group-hover:opacity-60 transition-opacity" />
+          </button>
+        )}
       </div>
 
       <div className="flex justify-center">
@@ -125,11 +182,11 @@ export function WorkBlockActive({
         <Button
           variant="outline"
           onClick={onDiscard}
-          className="flex-1"
+          className="flex-1 font-light"
         >
           Discard
         </Button>
-        <Button onClick={onComplete} className="flex-1">
+        <Button onClick={onComplete} className="flex-1 font-light">
           Complete
         </Button>
       </div>

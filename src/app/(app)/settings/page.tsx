@@ -1,9 +1,9 @@
-'use client';
+import { redirect } from 'next/navigation';
+import { getProfile } from '@/lib/api/queries';
+import { SettingsPageClient } from './page-client';
 
-import { useRouter } from 'next/navigation';
-import { SettingsModal } from './settings-modal';
-
-export default function SettingsPage() {
-  const router = useRouter();
-  return <SettingsModal open={true} onClose={() => router.back()} />;
+export default async function SettingsPage() {
+  const profile = await getProfile();
+  if (!profile) redirect('/login');
+  return <SettingsPageClient profile={profile} />;
 }

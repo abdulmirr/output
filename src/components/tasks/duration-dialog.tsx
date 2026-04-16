@@ -47,12 +47,13 @@ export function DurationDialog() {
   
   const selectedTask = tasks.find(t => t.id === selectedTaskId);
   const [inputValue, setInputValue] = useState('');
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (visible && selectedTask) {
       if (selectedTask.estimatedDuration) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional reset on dialog open
         setInputValue(formatDuration(selectedTask.estimatedDuration));
       } else {
         setInputValue('');

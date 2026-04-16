@@ -1,8 +1,8 @@
 'use client';
 
 import { formatTimerDisplay } from '@/lib/utils';
-import { useState, useEffect } from 'react';
-import { Plus, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState, useEffect, useSyncExternalStore } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useOverlayStore } from '@/stores/overlay-store';
 import { useWorkBlockStore } from '@/stores/work-block-store';
 import { useRouter } from 'next/navigation';
@@ -11,22 +11,30 @@ interface DailyHeaderProps {
   date: string;
 }
 
+const subscribeMounted = () => () => {};
+
 export function DailyHeader({ date }: DailyHeaderProps) {
-  const [dateStr, setDateStr] = useState('');
-  const [isToday, setIsToday] = useState(false);
+  const isMounted = useSyncExternalStore(
+    subscribeMounted,
+    () => true,
+    () => false
+  );
   const openOverlay = useOverlayStore((s) => s.open);
   const workBlockPhase = useWorkBlockStore((s) => s.phase);
   const activeBlock = useWorkBlockStore((s) => s.activeBlock);
   const isActive = workBlockPhase === 'active' || workBlockPhase === 'rating';
   const router = useRouter();
 
-  useEffect(() => {
-    const d = new Date(date + 'T12:00:00');
-    setDateStr(d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }));
+  const d = new Date(date + 'T12:00:00');
+  const weekday = d.toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase();
+  const dateLabel = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+
+  let isToday = false;
+  if (isMounted) {
     const now = new Date();
     const localToday = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-    setIsToday(date === localToday);
-  }, [date]);
+    isToday = date === localToday;
+  }
 
   const handlePrevDay = () => {
     const d = new Date(date + 'T12:00:00');
@@ -52,61 +60,69 @@ export function DailyHeader({ date }: DailyHeaderProps) {
     openOverlay('work-block');
   };
 
-  if (!dateStr) {
-    return (
-      <div className="flex items-center justify-between">
-        <h1 className="text-[22px] font-semibold tracking-[-0.02em] h-8" />
-      </div>
-    );
+  if (!isMounted) {
+    return <div className="mb-16 md:mb-20 h-24" />;
   }
 
   return (
-    <div className="flex items-center justify-between mt-4">
-      <div className="flex items-center">
-        <button
-          onClick={handlePrevDay}
-          className="-ml-7 p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-          title="Previous day"
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </button>
-        <h1 className="text-[22px] font-semibold tracking-[-0.02em]">
-          {dateStr}
-        </h1>
-        <button
-          onClick={handleNextDay}
-          className="ml-1 p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-          title="Next day"
-        >
-          <ChevronRight className="h-5 w-5" />
-        </button>
-      </div>
-      {isActive && activeBlock ? (
-        <MiniTimer
-          startTime={activeBlock.startTime}
-          type={activeBlock.type}
-          plannedDuration={activeBlock.plannedDuration}
-          title={activeBlock.title}
-          onClick={handleRestore}
-        />
-      ) : isToday ? (
-        <div className="flex flex-col items-end gap-1">
+    <div className="mb-16 md:mb-20">
+      {/* Date row: April 11 (left) + Start Work Block (right) — same row */}
+      <div className="flex items-center justify-between">
+        {/* Left arrow floats outside so h1 text aligns with page content */}
+        <div className="relative flex items-center">
           <button
-            onClick={handleStartWorkBlock}
-            className="flex items-center gap-1.5 text-base text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-md hover:bg-accent"
-            title="Start Work Block"
+            onClick={handlePrevDay}
+            className="absolute -left-7 text-foreground/20 hover:text-foreground/60 transition-colors"
+            title="Previous day"
           >
-            <Plus className="h-5 w-5" />
-            Start work block
+            <ChevronLeft className="h-5 w-5" />
           </button>
-          <p className="text-xs text-muted-foreground/60 pr-1">
-            or Press{' '}
-            <kbd className="px-1 py-0.5 text-xs bg-muted rounded font-mono">
-              Cmd+Shift+O
-            </kbd>
-          </p>
+          <h1 className="text-3xl md:text-4xl font-light tracking-tight">
+            {dateLabel}
+          </h1>
+          <button
+            onClick={handleNextDay}
+            className="ml-2 text-foreground/20 hover:text-foreground/60 transition-colors"
+            title="Next day"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
         </div>
-      ) : null}
+
+        {/* Right side: active timer or start button */}
+        <div className="flex items-center">
+          {isActive && activeBlock ? (
+            <MiniTimer
+              startTime={activeBlock.startTime}
+              type={activeBlock.type}
+              plannedDuration={activeBlock.plannedDuration}
+              title={activeBlock.title}
+              onClick={handleRestore}
+            />
+          ) : isToday ? (
+            <div className="flex flex-col items-end gap-1.5">
+              <button
+                onClick={handleStartWorkBlock}
+                className="text-xl font-light text-foreground/40 hover:text-foreground transition-colors"
+                title="Start work block"
+              >
+                + Start work block
+              </button>
+              <span className="text-xs text-foreground/25 flex items-center gap-1.5">
+                or Press
+                <kbd className="text-[11px] px-1.5 py-0.5 rounded-md bg-foreground/[0.06] text-foreground/40">
+                  Cmd+Shift+O
+                </kbd>
+              </span>
+            </div>
+          ) : null}
+        </div>
+      </div>
+
+      {/* Weekday label — below the date */}
+      <p className="text-xs font-mono uppercase tracking-wider text-foreground/40 mt-2">
+        {weekday}
+      </p>
     </div>
   );
 }
@@ -143,14 +159,14 @@ function MiniTimer({
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-2.5 rounded-lg border border-border bg-background px-4 py-2.5 text-sm font-medium hover:bg-muted transition-colors shadow-sm"
+      className="flex items-center gap-3 text-sm font-mono text-foreground/60 hover:text-foreground transition-colors"
       title={title}
     >
       <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
-      <span className="font-mono tabular-nums text-sm font-semibold">
+      <span className="tabular-nums">
         {formatTimerDisplay(displaySeconds)}
       </span>
-      <span className="text-muted-foreground truncate max-w-[120px]">
+      <span className="text-foreground/40 truncate max-w-[160px]">
         {title}
       </span>
     </button>

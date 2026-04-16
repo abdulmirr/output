@@ -46,7 +46,7 @@ export interface DailyLog {
   id: string;
   date: string; // YYYY-MM-DD
   dailyThoughts: string;
-  dailyFocusScore: number | null; // 1-10
+  dailyFocusScore: number | null; // 1-5
   dailyReflection: string | null;
   loggedOff: boolean;
   createdAt: Date;
@@ -70,7 +70,7 @@ export interface UserProfile {
   createdAt: Date;
   role: UserRole | null;
   dailyGoalHours: number;
+  timezone: string | null;
   onboardingCompleted: boolean;
   hasCompletedFirstBlock: boolean;
-  onboardingChecklistDismissed: boolean;
 }

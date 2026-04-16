@@ -5,8 +5,7 @@ import { WorkBlockStart } from './work-block-start';
 import { WorkBlockActive } from './work-block-active';
 import { FocusRating } from './focus-rating';
 import { useWorkBlockStore } from '@/stores/work-block-store';
-import { useTimer } from '@/hooks/use-timer';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { WorkBlockType } from '@/lib/types';
 import { toast } from 'sonner';
 import { saveWorkBlock } from '@/app/(app)/output/actions';
@@ -20,60 +19,61 @@ interface WorkBlockOverlayProps {
 }
 
 export function WorkBlockOverlay({ visible, onClose }: WorkBlockOverlayProps) {
-  const { phase, activeBlock, startBlock, updateStartTime, completeBlock, finishRating, discardBlock, minimize } =
+  const { phase, activeBlock, startBlock, updateStartTime, updateTitle, completeBlock, finishRating, discardBlock, minimize } =
     useWorkBlockStore();
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const hasCompletedFirstBlock = useOnboardingStore((s) => s.hasCompletedFirstBlock);
 
+  const isCountdown = activeBlock?.type === 'timer';
+  const plannedDuration = activeBlock?.plannedDuration ?? 0;
+
+  // Wall-clock based tick so the displayed timer stays in sync with real time
+  // even when the tab is backgrounded or setInterval gets throttled.
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (phase !== 'active') return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- wall-clock sync on phase change
+    setNow(Date.now());
+    const interval = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(interval);
+  }, [phase]);
+
   const elapsedSinceStart = activeBlock
-    ? Math.floor((Date.now() - activeBlock.startTime) / 1000)
+    ? Math.floor((now - activeBlock.startTime) / 1000)
     : 0;
 
-  const isCountdown = activeBlock?.type === 'timer';
-  const timerInitial = isCountdown ? (activeBlock?.plannedDuration ?? 0) : 0;
+  const displaySeconds = isCountdown
+    ? Math.max(plannedDuration - elapsedSinceStart, 0)
+    : elapsedSinceStart;
 
-  const timer = useTimer({
-    mode: isCountdown ? 'countdown' : 'stopwatch',
-    initialSeconds: isCountdown ? Math.max(timerInitial - elapsedSinceStart, 0) : elapsedSinceStart,
-    onComplete: () => {
-      if (isCountdown) {
-        toast('Timer complete! Time to wrap up.');
-        completeBlock();
-      }
-    },
-  });
+  const isRunning = phase === 'active';
 
-  // Start timer when phase becomes active
+  // Fire countdown completion exactly once when time runs out
+  const completedRef = useRef(false);
   useEffect(() => {
-    if (phase === 'active' && !timer.isRunning) {
-      timer.start();
+    if (phase !== 'active') {
+      completedRef.current = false;
+      return;
     }
-    if (phase !== 'active' && timer.isRunning) {
-      timer.pause();
+    if (isCountdown && elapsedSinceStart >= plannedDuration && plannedDuration > 0 && !completedRef.current) {
+      completedRef.current = true;
+      toast('Timer complete! Time to wrap up.');
+      completeBlock();
     }
-  }, [phase, timer]);
+  }, [phase, isCountdown, elapsedSinceStart, plannedDuration, completeBlock]);
 
   if (!visible) return null;
 
   const handleStart = (title: string, type: WorkBlockType, plannedDuration: number | null) => {
     startBlock(title, type, plannedDuration);
-    if (type === 'timer' && plannedDuration) {
-      timer.reset(plannedDuration);
-    } else {
-      timer.reset(0);
-    }
-    timer.start();
   };
 
   const handleComplete = () => {
-    timer.pause();
     completeBlock();
   };
 
   const handleDiscard = () => {
-    timer.pause();
-    timer.reset(0);
     discardBlock();
     onClose();
   };
@@ -110,21 +110,16 @@ export function WorkBlockOverlay({ visible, onClose }: WorkBlockOverlayProps) {
 
     setSubmitting(false);
     finishRating();
-    timer.reset(0);
     onClose();
     router.refresh();
   };
 
   const handleStartTimeChange = (newStartTime: number) => {
     updateStartTime(newStartTime);
-    const elapsed = Math.floor((Date.now() - newStartTime) / 1000);
-    if (isCountdown) {
-      timer.reset(Math.max((activeBlock?.plannedDuration ?? 0) - elapsed, 0));
-      timer.start();
-    } else {
-      timer.reset(elapsed);
-      timer.start();
-    }
+  };
+
+  const handleTitleChange = (newTitle: string) => {
+    updateTitle(newTitle);
   };
 
   const handleMinimize = () => {
@@ -147,16 +142,17 @@ export function WorkBlockOverlay({ visible, onClose }: WorkBlockOverlayProps) {
         <div className="fixed inset-0 bg-black/40" onClick={handleBackdropClick} />
         <div className="relative z-10 w-full max-w-lg rounded-2xl border border-border bg-background p-8 shadow-2xl">
           {phase === 'start' && <WorkBlockStart onStart={handleStart} onCancel={onClose} />}
-          {phase === 'active' && (
+          {phase === 'active' && activeBlock && (
             <WorkBlockActive
-              title={activeBlock?.title ?? ''}
-              seconds={timer.seconds}
-              isRunning={timer.isRunning}
-              startTime={activeBlock?.startTime ?? Date.now()}
+              title={activeBlock.title}
+              seconds={displaySeconds}
+              isRunning={isRunning}
+              startTime={activeBlock.startTime}
               onComplete={handleComplete}
               onDiscard={handleDiscard}
               onMinimize={handleMinimize}
               onStartTimeChange={handleStartTimeChange}
+              onTitleChange={handleTitleChange}
             />
           )}
           {phase === 'rating' && <FocusRating onSubmit={handleRatingSubmit} submitting={submitting} />}

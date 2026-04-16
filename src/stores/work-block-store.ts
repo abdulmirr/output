@@ -22,6 +22,7 @@ interface WorkBlockState {
   beginStart: () => void;
   startBlock: (title: string, type: WorkBlockType, plannedDuration: number | null) => void;
   updateStartTime: (startTime: number) => void;
+  updateTitle: (title: string) => void;
   completeBlock: () => void;
   finishRating: () => void;
   discardBlock: () => void;
@@ -56,6 +57,11 @@ export const useWorkBlockStore = create<WorkBlockState>()(
       updateStartTime: (startTime) =>
         set((state) =>
           state.activeBlock ? { activeBlock: { ...state.activeBlock, startTime } } : {}
+        ),
+
+      updateTitle: (title) =>
+        set((state) =>
+          state.activeBlock ? { activeBlock: { ...state.activeBlock, title } } : {}
         ),
 
       completeBlock: () => set({ phase: 'rating', minimized: false }),

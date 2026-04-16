@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useTransition } from 'react';
+import { useEffect, useRef, useTransition } from 'react';
 import { Portal } from '@/components/shared/portal';
 import { useOverlayStore } from '@/stores/overlay-store';
 import { useTaskStore } from '@/stores/task-store';

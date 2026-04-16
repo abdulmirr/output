@@ -44,6 +44,7 @@ export function WorkBlockStart({ onStart, onCancel }: WorkBlockStartProps) {
       if (charIndex > 0) {
         timer = setTimeout(() => setCharIndex((c) => c - 1), 20); // Fast delete
       } else {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- typewriter state machine
         setIsDeleting(false);
         setPhraseIndex((prev) => (prev + 1) % PHRASES.length);
       }
@@ -63,8 +64,8 @@ export function WorkBlockStart({ onStart, onCancel }: WorkBlockStartProps) {
   return (
     <div className="space-y-6 mt-2">
       <div className="space-y-2">
-        <h2 className="text-[22px] font-semibold tracking-[-0.02em]">Start work block</h2>
-        <label className="text-sm font-semibold text-muted-foreground block">What are you working on?</label>
+        <h2 className="text-xl font-light">Start work block</h2>
+        <label className="text-sm text-muted-foreground block">What are you working on?</label>
       </div>
 
       <Input
@@ -84,10 +85,10 @@ export function WorkBlockStart({ onStart, onCancel }: WorkBlockStartProps) {
         <button
           onClick={() => setBlockType('stopwatch')}
           className={cn(
-            'flex-1 flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+            'flex-1 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-light transition-all border',
             blockType === 'stopwatch'
-              ? 'bg-muted text-foreground'
-              : 'text-muted-foreground hover:bg-muted'
+              ? 'bg-foreground text-background border-foreground'
+              : 'bg-transparent text-muted-foreground border-border hover:border-foreground/30'
           )}
         >
           <Clock className="h-4 w-4" />
@@ -96,10 +97,10 @@ export function WorkBlockStart({ onStart, onCancel }: WorkBlockStartProps) {
         <button
           onClick={() => setBlockType('timer')}
           className={cn(
-            'flex-1 flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+            'flex-1 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-light transition-all border',
             blockType === 'timer'
-              ? 'bg-muted text-foreground'
-              : 'text-muted-foreground hover:bg-muted'
+              ? 'bg-foreground text-background border-foreground'
+              : 'bg-transparent text-muted-foreground border-border hover:border-foreground/30'
           )}
         >
           <Timer className="h-4 w-4" />
@@ -111,13 +112,14 @@ export function WorkBlockStart({ onStart, onCancel }: WorkBlockStartProps) {
 
       <div className="flex justify-end gap-3 pt-4">
         {onCancel && (
-          <Button variant="outline" onClick={onCancel}>
+          <Button variant="outline" onClick={onCancel} className="font-light rounded-xl px-6">
             Cancel
           </Button>
         )}
         <Button
           onClick={handleSubmit}
           disabled={!title.trim() || (blockType === 'timer' && !duration)}
+          className="font-light rounded-xl px-6"
         >
           Start
         </Button>

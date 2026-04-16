@@ -43,7 +43,7 @@ export function RolePicker({ onNext }: RolePickerProps) {
     <div className="space-y-6">
       <div className="space-y-1">
         <h2 className="text-xl font-semibold tracking-tight">What best describes you?</h2>
-        <p className="text-sm text-muted-foreground">We'll tailor your experience.</p>
+        <p className="text-sm text-muted-foreground">We&apos;ll tailor your experience.</p>
       </div>
 
       <div className="grid grid-cols-3 gap-2">

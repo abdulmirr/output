@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { completeOnboarding } from '@/app/onboarding/actions';
+import { FOCUS_EMOJIS } from '@/lib/constants';
 
 export function HowItWorks({ onBack }: { onBack: () => void }) {
   const [isPending, setIsPending] = useState(false);
@@ -25,7 +26,7 @@ export function HowItWorks({ onBack }: { onBack: () => void }) {
   return (
     <div className="space-y-6">
       <div className="space-y-1">
-        <h2 className="text-xl font-semibold tracking-tight">Here's how it works</h2>
+        <h2 className="text-xl font-semibold tracking-tight">Here&apos;s how it works</h2>
         <p className="text-sm text-muted-foreground">Three steps, every day.</p>
       </div>
 
@@ -40,7 +41,7 @@ export function HowItWorks({ onBack }: { onBack: () => void }) {
               <kbd className="px-2 py-1 text-xs bg-muted rounded border border-border font-mono">⇧</kbd>
               <kbd className="px-2 py-1 text-xs bg-muted rounded border border-border font-mono animate-pulse">O</kbd>
             </div>
-            <p className="text-xs text-muted-foreground">Name what you're working on and hit go.</p>
+            <p className="text-xs text-muted-foreground">Name what you&apos;re working on and hit go.</p>
           </div>
         </div>
 
@@ -49,18 +50,18 @@ export function HowItWorks({ onBack }: { onBack: () => void }) {
           <span className="text-xs font-mono text-muted-foreground mt-0.5">02</span>
           <div className="flex-1 space-y-1">
             <p className="text-sm font-medium">Rate your focus</p>
-            <div className="flex items-center gap-0.5 py-1">
-              {['😫','😞','😕','😐','🙂','😊','😄','🎯','🔥','🤩'].map((emoji, i) => (
+            <div className="flex items-center gap-1.5 py-1">
+              {[1, 2, 3, 4, 5].map((score) => (
                 <span
-                  key={i}
+                  key={score}
                   className="text-base leading-none"
-                  style={{ opacity: i === 7 ? 1 : 0.3 + (i / 10) * 0.4 }}
+                  style={{ opacity: score === 4 ? 1 : 0.4 }}
                 >
-                  {emoji}
+                  {FOCUS_EMOJIS[score]}
                 </span>
               ))}
             </div>
-            <p className="text-xs text-muted-foreground">Score each block when you're done.</p>
+            <p className="text-xs text-muted-foreground">Score each block when you&apos;re done.</p>
           </div>
         </div>
 

@@ -34,6 +34,15 @@ export function TaskDetailPanel() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTaskId]);
 
+  useEffect(() => {
+    if (!selectedTaskId) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') selectTask(null);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [selectedTaskId, selectTask]);
+
   const persist = (patch: Parameters<typeof updateTask>[1]) => {
     if (!task) return;
     startTransition(async () => {
@@ -85,12 +94,12 @@ export function TaskDetailPanel() {
   return (
     <div
       className={cn(
-        'fixed right-0 top-0 h-screen w-72 bg-background border-l border-border flex flex-col z-40 transition-transform duration-200 ease-in-out',
+        'fixed right-0 top-14 h-[calc(100vh-3.5rem)] w-72 bg-background border-l border-border flex flex-col z-40 transition-transform duration-200 ease-in-out',
         task ? 'translate-x-0' : 'translate-x-full'
       )}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-5 pt-6 pb-4 border-b border-border/50">
+      <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-border/50">
         <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Details</span>
         <button
           onClick={() => selectTask(null)}

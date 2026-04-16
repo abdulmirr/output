@@ -2,7 +2,6 @@
 
 import { WorkBlock } from '@/lib/types';
 import { formatDuration } from '@/lib/utils';
-import { FOCUS_TEXT_COLORS } from '@/lib/constants';
 import { Pencil, X } from 'lucide-react';
 
 const RATING_WORDS: Record<number, string> = {
@@ -46,39 +45,46 @@ export function OutputBlockCard({ block, onEdit, onDelete, showDuration, onToggl
   const focusScore = block.focusScore ?? null;
 
   return (
-    <div className="flex items-start gap-3 py-3 group hover:bg-neutral-100/70 dark:hover:bg-muted/30 rounded-md px-2 -mx-2 transition-colors">
-      {/* Time */}
+    <div className="flex items-start gap-3 py-3.5 group hover:bg-foreground/[0.03] rounded-md px-2 -mx-2 transition-colors">
+      {/* Time — default: duration (xxm), click to toggle to time range */}
       <div
         className="text-sm text-muted-foreground font-mono w-28 shrink-0 pt-0.5 cursor-pointer hover:text-foreground transition-colors select-none"
         onClick={onToggleDuration}
         title="Click to toggle all time/duration"
       >
         {block.endTime
-          ? (showDuration
+          ? (!showDuration
               ? `${formatDuration(block.duration)}${block.type === 'timer' ? ' (timer)' : ''}`
               : formatMinimalTimeRange(block.startTime, block.endTime))
           : 'In progress'}
       </div>
 
       {/* Focus rating — always present to keep title column aligned */}
+      {/* Default: word label, click to toggle to number */}
       <div className="w-24 shrink-0 pt-0.5">
         <button
           onClick={focusScore !== null ? onToggleRatingLabel : undefined}
           className={`text-sm font-mono select-none transition-colors ${
             focusScore !== null
-              ? `${FOCUS_TEXT_COLORS[focusScore]} hover:opacity-70 cursor-pointer`
-              : 'text-transparent group-hover:text-muted-foreground/40 cursor-default'
+              ? `hover:opacity-70 cursor-pointer ${
+                  focusScore === 1 ? 'text-red-500' :
+                  focusScore === 2 ? 'text-orange-500' :
+                  focusScore === 3 ? 'text-yellow-500' :
+                  focusScore === 4 ? 'text-lime-500' :
+                  'text-green-500'
+                }`
+              : 'text-transparent group-hover:text-foreground/30 cursor-default'
           }`}
         >
           {focusScore !== null
-            ? (showRatingLabel ? RATING_WORDS[focusScore] : `${focusScore}/5`)
+            ? (!showRatingLabel ? RATING_WORDS[focusScore] : `${focusScore}/5`)
             : 'x/5'}
         </button>
       </div>
 
       {/* Title */}
       <div className="flex-1 min-w-0">
-        <span className="text-[15px] font-normal tracking-[-0.01em] truncate">{block.title}</span>
+        <p className="text-base font-light whitespace-pre-wrap break-words">{block.title}</p>
       </div>
 
       {/* Action buttons */}

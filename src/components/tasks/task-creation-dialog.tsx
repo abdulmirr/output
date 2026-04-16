@@ -138,6 +138,7 @@ export function TaskCreationDialog({ visible, onClose, activeFolderId, editingTa
 
   useEffect(() => {
     if (visible && editingTask) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional reset on dialog open
       setTitle(editingTask.title);
       setDurationInput(editingTask.estimatedDuration ? formatDuration(editingTask.estimatedDuration) : '');
       setNotes(editingTask.notes || '');

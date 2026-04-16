@@ -17,7 +17,7 @@ export function FocusRating({ onSubmit, submitting }: FocusRatingProps) {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-[18px] font-semibold tracking-[-0.02em]">How focused were you?</h2>
+        <h2 className="text-lg font-light">How focused were you?</h2>
       </div>
 
       <EmojiSlider value={score} onChange={setScore} max={5} />

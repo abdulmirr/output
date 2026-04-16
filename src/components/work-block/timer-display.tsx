@@ -13,7 +13,7 @@ export function TimerDisplay({ seconds, isRunning }: TimerDisplayProps) {
       {isRunning && (
         <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
       )}
-      <span className="text-3xl font-mono font-semibold tabular-nums tracking-tight">
+      <span className="text-3xl font-mono font-light tabular-nums tracking-tight">
         {formatTimerDisplay(seconds)}
       </span>
     </div>

@@ -28,11 +28,7 @@ export const useTaskStore = create<TaskState>()((set) => ({
   selectedTaskId: null,
   
   setInitialData: (tasks, folders) => {
-    set((state) => {
-      // Small optimization: only update if lengths/ids differ significantly, or just force replace.
-      // Force replacing is fine since this is called on mount/refresh
-      return { tasks, folders };
-    });
+    set({ tasks, folders });
   },
   
   selectTask: (id) => set({ selectedTaskId: id }),

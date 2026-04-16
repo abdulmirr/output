@@ -18,6 +18,7 @@ export function NotesDialog() {
 
   useEffect(() => {
     if (visible && selectedTask) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional reset on dialog open
       setNotes(selectedTask.notes || '');
       setTimeout(() => {
         textareaRef.current?.focus();

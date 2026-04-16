@@ -23,7 +23,7 @@ export function WaitlistForm() {
     return (
       <div className="flex items-center gap-3 text-sm text-muted-foreground animate-in fade-in duration-500">
         <CheckCircle2 className="w-4 h-4 text-foreground shrink-0" />
-        <span>You're on the list. We'll be in touch.</span>
+        <span>You&apos;re on the list. We&apos;ll be in touch.</span>
       </div>
     );
   }

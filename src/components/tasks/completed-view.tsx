@@ -6,7 +6,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { formatDuration } from './duration-dialog';
 import { CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { toggleTask } from '@/app/(app)/tasks/actions';
 
 type FilterPeriod = 'all' | 'day' | 'week' | 'month';
 

@@ -28,7 +28,7 @@ function generateTimeOptions(): { value: string; label: string }[] {
 const TIME_OPTIONS = generateTimeOptions();
 
 /** Convert HH:MM 24h string to display label like "11:02 AM" */
-function toDisplayLabel(hhmm: string): string {
+export function toDisplayLabel(hhmm: string): string {
   const [h, m] = hhmm.split(':').map(Number);
   if (isNaN(h) || isNaN(m)) return '';
   const hour12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
@@ -41,7 +41,7 @@ function toDisplayLabel(hhmm: string): string {
  * Accepts formats like: "11:02 am", "11:02am", "2:30 PM", "14:30", "9am", "9:5p", etc.
  * Returns null if unparseable.
  */
-function parseTimeInput(input: string): string | null {
+export function parseTimeInput(input: string): string | null {
   const trimmed = input.trim().toLowerCase();
   if (!trimmed) return null;
 

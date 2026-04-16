@@ -143,36 +143,6 @@ export async function getProfile(): Promise<UserProfile | null> {
   return mapProfile(data);
 }
 
-export async function getHasAnyTask(): Promise<boolean> {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return false;
-
-  const { data } = await supabase
-    .from('tasks')
-    .select('id')
-    .eq('user_id', user.id)
-    .neq('status', 'deleted')
-    .limit(1);
-
-  return (data?.length ?? 0) > 0;
-}
-
-export async function getHasAnyBlock(): Promise<boolean> {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return false;
-
-  const { data } = await supabase
-    .from('work_blocks')
-    .select('id')
-    .eq('user_id', user.id)
-    .eq('status', 'completed')
-    .limit(1);
-
-  return (data?.length ?? 0) > 0;
-}
-
 // ── Mappers (DB row → TypeScript interface) ──
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -252,9 +222,9 @@ function mapProfile(row: any): UserProfile {
     createdAt: new Date(row.created_at),
     role: row.role ?? null,
     dailyGoalHours: row.daily_goal_hours ?? 4,
+    timezone: row.timezone ?? null,
     onboardingCompleted: row.onboarding_completed ?? false,
     hasCompletedFirstBlock: row.has_completed_first_block ?? false,
-    onboardingChecklistDismissed: row.onboarding_checklist_dismissed ?? false,
   };
 }
 

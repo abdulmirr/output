@@ -25,6 +25,7 @@ const AddManualBlockSchema = z.object({
   startTime: ISO_DATETIME,
   endTime: ISO_DATETIME,
   focusScore: z.number().int().min(1).max(5).nullable().optional(),
+  thoughts: z.string().max(5000).nullable().optional(),
 });
 
 const UpdateWorkBlockSchema = z.object({
@@ -32,6 +33,7 @@ const UpdateWorkBlockSchema = z.object({
   startTime: ISO_DATETIME.optional(),
   endTime: ISO_DATETIME.optional(),
   focusScore: z.number().int().min(1).max(5).nullable().optional(),
+  thoughts: z.string().max(5000).nullable().optional(),
 });
 
 export async function saveWorkBlock(block: {
@@ -79,6 +81,7 @@ export async function addManualBlock(data: {
   startTime: string;
   endTime: string;
   focusScore?: number | null;
+  thoughts?: string | null;
 }) {
   const parsed = AddManualBlockSchema.safeParse(data);
   if (!parsed.success) return { error: parsed.error.issues[0].message };
@@ -104,6 +107,7 @@ export async function addManualBlock(data: {
     type: 'stopwatch',
     status: 'completed',
     ...(validData.focusScore != null ? { focus_score: validData.focusScore } : {}),
+    ...(validData.thoughts != null ? { thoughts: validData.thoughts } : {}),
   });
 
   if (error) return { error: error.message };
@@ -339,6 +343,7 @@ export async function updateWorkBlock(id: string, data: {
   startTime?: string;
   endTime?: string;
   focusScore?: number | null;
+  thoughts?: string | null;
 }) {
   const parsedId = UUID.safeParse(id);
   if (!parsedId.success) return { error: 'Invalid ID' };
@@ -362,6 +367,7 @@ export async function updateWorkBlock(id: string, data: {
   if (validData.startTime !== undefined) updates.start_time = validData.startTime;
   if (validData.endTime !== undefined) updates.end_time = validData.endTime;
   if (validData.focusScore !== undefined) updates.focus_score = validData.focusScore;
+  if (validData.thoughts !== undefined) updates.thoughts = validData.thoughts;
 
   if (validData.startTime && validData.endTime) {
     const start = new Date(validData.startTime);
@@ -461,6 +467,64 @@ export async function reorderDailyTodos(orderedIds: string[]) {
   const failed = results.find((r) => r.error);
   if (failed?.error) return { error: failed.error.message };
 
+  revalidatePath('/output');
+  return { success: true };
+}
+
+export async function moveDailyTodoToTomorrow(id: string) {
+  const parsedId = UUID.safeParse(id);
+  if (!parsedId.success) return { error: 'Invalid ID' };
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'Not authenticated' };
+
+  const { data: todo } = await supabase
+    .from('daily_todos')
+    .select('date')
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .single();
+
+  if (!todo) return { error: 'Todo not found' };
+
+  const tomorrow = new Date(todo.date);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+  let { data: log } = await supabase
+    .from('daily_logs')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('date', tomorrowStr)
+    .single();
+
+  if (!log) {
+    const { data: newLog } = await supabase
+      .from('daily_logs')
+      .insert({ user_id: user.id, date: tomorrowStr })
+      .select('id')
+      .single();
+    log = newLog;
+  }
+
+  const { count } = await supabase
+    .from('daily_todos')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+    .eq('date', tomorrowStr);
+
+  const { error } = await supabase
+    .from('daily_todos')
+    .update({
+      date: tomorrowStr,
+      daily_log_id: log?.id,
+      sort_order: count || 0,
+    })
+    .eq('id', id)
+    .eq('user_id', user.id);
+
+  if (error) return { error: error.message };
   revalidatePath('/output');
   return { success: true };
 }

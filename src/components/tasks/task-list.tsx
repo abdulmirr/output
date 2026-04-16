@@ -30,13 +30,10 @@ export function TaskList({
     .filter(
       (t) =>
         t.status !== 'deleted' &&
+        t.status !== 'completed' &&
         t.folderId === folderId
     )
-    .sort((a, b) => {
-      if (a.status === 'completed' && b.status !== 'completed') return 1;
-      if (a.status !== 'completed' && b.status === 'completed') return -1;
-      return a.sortOrder - b.sortOrder;
-    });
+    .sort((a, b) => a.sortOrder - b.sortOrder);
 
   return (
     <SortableContext

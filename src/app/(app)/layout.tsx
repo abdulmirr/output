@@ -9,16 +9,14 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <AppShell>
-      <TzCookie />
+      <TzCookie profileTimezone={profile?.timezone ?? null} />
       <OnboardingStoreInitializer hasCompletedFirstBlock={profile?.hasCompletedFirstBlock ?? true} />
-      <div className="flex h-screen">
-        <Sidebar />
-        <main className="flex-1 overflow-y-auto">
-          <div className="mx-auto max-w-[960px] px-8 py-6 md:px-12">
-            {children}
-          </div>
-        </main>
-      </div>
+      <Sidebar />
+      <main className="min-h-screen pt-14">
+        <div className="mx-auto max-w-[720px] px-6 md:px-8 py-12 md:py-20">
+          {children}
+        </div>
+      </main>
     </AppShell>
   );
 }

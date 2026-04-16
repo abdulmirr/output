@@ -10,7 +10,7 @@ interface EmojiSliderProps {
   max?: number;
 }
 
-export function EmojiSlider({ value, onChange, compact, max = 10 }: EmojiSliderProps) {
+export function EmojiSlider({ value, onChange, compact, max = 5 }: EmojiSliderProps) {
   return (
     <div className={compact ? 'space-y-2' : 'space-y-4'}>
       <div className="flex items-center gap-3">
@@ -18,7 +18,7 @@ export function EmojiSlider({ value, onChange, compact, max = 10 }: EmojiSliderP
           {FOCUS_EMOJIS[value]}
         </span>
         <div className="flex flex-col">
-          <span className={compact ? 'text-sm font-semibold' : 'text-lg font-semibold'}>{value}/{max}</span>
+          <span className={compact ? 'text-sm font-normal' : 'text-lg font-normal'}>{value}/{max}</span>
           <span className="text-xs text-muted-foreground">{FOCUS_LABELS[value]}</span>
         </div>
       </div>
@@ -31,8 +31,8 @@ export function EmojiSlider({ value, onChange, compact, max = 10 }: EmojiSliderP
         className="w-full"
       />
       <div className="flex justify-between text-xs text-muted-foreground">
-        <span>Distracted</span>
-        <span>Deep work</span>
+        <span>Wasted</span>
+        <span>Deep</span>
       </div>
     </div>
   );

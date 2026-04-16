@@ -29,7 +29,7 @@ export function OnboardingWizard({ displayName }: OnboardingWizardProps) {
             <h1 className="text-2xl font-bold tracking-tight">
               {firstName ? `Welcome, ${firstName}.` : 'Welcome.'}
             </h1>
-            <p className="text-sm text-muted-foreground mt-1">Let's get you set up in 30 seconds.</p>
+            <p className="text-sm text-muted-foreground mt-1">Let&apos;s get you set up in 30 seconds.</p>
           </div>
         )}
       </div>

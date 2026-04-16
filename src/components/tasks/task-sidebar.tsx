@@ -51,28 +51,26 @@ function DroppableFolder({
 }
 
 export function TaskTabBar({ activeView, onViewChange }: TaskTabBarProps) {
-  const { folders, tasks, addFolderOptimistic, deleteFolderOptimistic } =
-    useTaskStore();
+  const { folders, tasks, addFolderOptimistic } = useTaskStore();
   const [isCreating, setIsCreating] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
 
-  // Filter out "This Week" from default folders
+  // Filter out "Today" and "This Week" — Inbox now handles sub-filtering
   const visibleDefaults = folders.filter(
-    (f) => f.isDefault && f.name !== 'This Week'
+    (f) => f.isDefault && f.name !== 'This Week' && f.name !== 'Today'
   );
   const customFolders = folders.filter((f) => !f.isDefault);
 
   const activeTasks = tasks.filter((t) => t.status !== 'deleted');
 
   const getCount = (folderId: string) =>
-    activeTasks.filter((t) => t.folderId === folderId).length;
+    activeTasks.filter(
+      (t) => t.folderId === folderId && t.status !== 'completed'
+    ).length;
 
   const completedCount = activeTasks.filter(
     (t) => t.status === 'completed'
   ).length;
-
-  const isCustomFolderActive =
-    activeView !== 'completed' && customFolders.some((f) => f.id === activeView);
 
   const handleCreateFolder = async () => {
     if (!newFolderName.trim()) return;
@@ -97,10 +95,10 @@ export function TaskTabBar({ activeView, onViewChange }: TaskTabBarProps) {
             <button
               onClick={() => onViewChange(folder.id)}
               className={cn(
-                'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-light transition-colors',
                 activeView === folder.id
-                  ? 'bg-accent text-accent-foreground'
-                  : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
+                  ? 'bg-foreground/[0.07] text-foreground font-normal'
+                  : 'text-foreground/60 hover:bg-foreground/[0.04] hover:text-foreground'
               )}
             >
               {getFolderIcon(folder.name, folder.isDefault)}
@@ -119,10 +117,10 @@ export function TaskTabBar({ activeView, onViewChange }: TaskTabBarProps) {
       <button
         onClick={() => onViewChange('completed')}
         className={cn(
-          'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+          'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-light transition-colors',
           activeView === 'completed'
-            ? 'bg-accent text-accent-foreground'
-            : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
+            ? 'bg-foreground/[0.07] text-foreground font-normal'
+            : 'text-foreground/60 hover:bg-foreground/[0.04] hover:text-foreground'
         )}
       >
         <Check className="h-4 w-4" />
@@ -142,10 +140,10 @@ export function TaskTabBar({ activeView, onViewChange }: TaskTabBarProps) {
             <button
               onClick={() => onViewChange(folder.id)}
               className={cn(
-                'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-light transition-colors',
                 activeView === folder.id
-                  ? 'bg-accent text-accent-foreground'
-                  : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
+                  ? 'bg-foreground/[0.07] text-foreground font-normal'
+                  : 'text-foreground/60 hover:bg-foreground/[0.04] hover:text-foreground'
               )}
             >
               <Folder className="h-4 w-4" />
@@ -196,7 +194,7 @@ export function TaskTabBar({ activeView, onViewChange }: TaskTabBarProps) {
       ) : (
         <button
           onClick={() => setIsCreating(true)}
-          className="flex items-center justify-center rounded-lg p-2 text-muted-foreground hover:bg-accent/50 hover:text-foreground transition-colors"
+          className="flex items-center justify-center rounded-lg p-2 text-foreground/30 hover:bg-foreground/[0.04] hover:text-foreground/60 transition-colors"
           title="New folder"
         >
           <Plus className="h-4 w-4" />
