@@ -48,7 +48,7 @@ export function OutputBlockCard({ block, onEdit, onDelete, showDuration, onToggl
     <div className="flex items-center gap-3 py-3.5 group hover:bg-foreground/[0.03] rounded-md px-2 -mx-2 transition-colors">
       {/* Time — default: duration (xxm), click to toggle to time range */}
       <div
-        className="text-xs text-muted-foreground font-mono w-36 shrink-0 whitespace-nowrap cursor-pointer hover:text-foreground transition-colors select-none"
+        className="text-[13px] text-muted-foreground font-mono w-36 shrink-0 translate-y-px whitespace-nowrap cursor-pointer hover:text-foreground transition-colors select-none"
         onClick={onToggleDuration}
         title="Click to toggle all time/duration"
       >
