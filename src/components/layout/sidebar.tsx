@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Zap, CheckSquare, BarChart3, Settings, ChevronsLeft } from 'lucide-react';
+import { Menu, X, Zap, CheckSquare, BarChart3, MessageCircleHeart, Settings, ChevronsLeft } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { ThemeToggle } from './theme-toggle';
 import { createClient } from '@/lib/supabase/client';
@@ -11,12 +11,14 @@ const navItems = [
   { href: '/output', label: 'output', icon: Zap },
   { href: '/tasks', label: 'tasks', icon: CheckSquare },
   { href: '/stats', label: 'stats', icon: BarChart3 },
+  { href: '/feedback', label: 'feedback', icon: MessageCircleHeart },
 ];
 
 const pageTitles: Record<string, string> = {
   '/output': 'Output',
   '/tasks': 'Tasks',
   '/stats': 'Stats',
+  '/feedback': 'Feedback',
   '/settings': 'Settings',
 };
 

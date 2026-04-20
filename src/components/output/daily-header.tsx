@@ -103,14 +103,14 @@ export function DailyHeader({ date }: DailyHeaderProps) {
             <div className="flex flex-col items-end gap-1.5">
               <button
                 onClick={handleStartWorkBlock}
-                className="rounded-full bg-foreground text-background px-5 py-2.5 text-sm font-medium hover:bg-foreground/90 transition-colors shadow-sm"
+                className="rounded-xl bg-foreground text-background px-5 py-2.5 text-sm font-medium hover:bg-foreground/90 transition-colors shadow-sm"
                 title="Start work block"
               >
                 + Start work block
               </button>
-              <kbd className="text-[11px] px-1.5 py-0.5 rounded-md bg-foreground/[0.06] text-foreground/40">
+              <span className="text-[11px] text-foreground/40 font-mono">
                 Cmd+Shift+O
-              </kbd>
+              </span>
             </div>
           ) : null}
         </div>

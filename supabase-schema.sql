@@ -254,7 +254,31 @@ create policy "Anyone can insert into waitlist"
 create index if not exists idx_waitlist_email on public.waitlist (email);
 
 -- ============================================
--- 8. Account self-delete
+-- 8. Feedback table (user-submitted ideas/bugs/notes)
+-- ============================================
+create table if not exists public.feedback (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references auth.users on delete set null,
+  email text,
+  message text not null check (char_length(message) between 1 and 5000),
+  created_at timestamptz default now() not null
+);
+
+alter table public.feedback enable row level security;
+
+create policy "Users can insert own feedback"
+  on public.feedback for insert
+  with check (auth.uid() = user_id);
+
+create policy "Users can view own feedback"
+  on public.feedback for select
+  using (auth.uid() = user_id);
+
+create index if not exists idx_feedback_user_created
+  on public.feedback (user_id, created_at desc);
+
+-- ============================================
+-- 9. Account self-delete
 -- ============================================
 -- Allows an authenticated user to delete their own auth row. The profiles row
 -- cascades via the FK declared on profiles.id.
