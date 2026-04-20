@@ -148,10 +148,7 @@ export async function resetTour() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Not authenticated' };
 
-  const { error } = await supabase
-    .from('profiles')
-    .update({ tour_progress: { stage: 'output', step: 0, skipped: false } })
-    .eq('id', user.id);
+  const { error } = await supabase.rpc('reset_tour_progress');
 
   if (error) return { error: 'Could not reset tour' };
   updateTag(TAG.profile);
