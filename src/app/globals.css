@@ -196,3 +196,8 @@ html.grid-bg body::before {
     box-shadow: 0 0 0 4px rgba(34, 197, 94, 0);
   }
 }
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}

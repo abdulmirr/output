@@ -1,13 +1,11 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { LandingNav } from "@/components/landing/landing-nav";
-import { HeroSection } from "@/components/landing/hero-section";
-import { ShowcaseSection } from "@/components/landing/showcase-section";
-import { PlatformBanner } from "@/components/landing/platform-banner";
 import { Footer } from "@/components/landing/footer";
 import { BackgroundGrid } from "@/components/ui/background-snippets";
+import { V2HeroSection } from "@/components/landing/v2-hero";
 
-export default async function Home() {
+export default async function V2Landing() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -16,12 +14,14 @@ export default async function Home() {
   }
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen selection:bg-primary/30">
       <BackgroundGrid />
       <LandingNav />
-      <HeroSection />
-      <PlatformBanner />
-      <ShowcaseSection />
+      
+      <main className="flex-1 flex flex-col items-center">
+        <V2HeroSection />
+      </main>
+      
       <Footer />
     </div>
   );

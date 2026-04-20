@@ -2,7 +2,7 @@ import { FadeIn } from './fade-in';
 
 export function ShowcaseSection() {
   return (
-    <section className="py-24 md:py-32 border-t border-border">
+    <section className="pt-12 pb-24 md:pt-16 md:pb-32">
       <div className="mx-auto max-w-5xl px-6 space-y-24 md:space-y-32">
         {/* Row 1: Work Blocks */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
@@ -13,14 +13,8 @@ export function ShowcaseSection() {
               </h3>
               <p className="text-muted-foreground leading-relaxed">
                 Open the overlay, name what you&apos;re building, choose stopwatch
-                or timer, and go. When you&apos;re done, rate your depth. No
-                menus, no friction.
+                or timer, and go. When you&apos;re done, rate your depth.
               </p>
-              <div className="flex flex-wrap gap-2 pt-2">
-                <StepBadge step="1" label="Open overlay" />
-                <StepBadge step="2" label="Start timer" />
-                <StepBadge step="3" label="Rate focus" />
-              </div>
             </div>
           </FadeIn>
           <FadeIn delay={150}>
@@ -28,31 +22,15 @@ export function ShowcaseSection() {
           </FadeIn>
         </div>
 
-        {/* Row 2: Depth Rating */}
+        {/* Row 2: Tasks */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
           <FadeIn className="order-2 md:order-1">
-            <DepthRatingMockup />
+            <TasksInboxMockup />
           </FadeIn>
           <FadeIn delay={150} className="order-1 md:order-2">
             <div className="space-y-4">
               <h3 className="text-2xl md:text-3xl font-bold tracking-tight">
-                See the quality, not just the quantity
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Every session gets a depth rating — deep, okay, or shallow. At
-                the end of the day, you don&apos;t just see hours. You see how
-                many of them actually mattered.
-              </p>
-            </div>
-          </FadeIn>
-        </div>
-
-        {/* Row 3: Tasks */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
-          <FadeIn>
-            <div className="space-y-4">
-              <h3 className="text-2xl md:text-3xl font-bold tracking-tight">
-                Capture tasks without breaking flow
+                Capture tasks to stay in flow
               </h3>
               <p className="text-muted-foreground leading-relaxed">
                 Open the quick-add from anywhere. Drop a task into your inbox and
@@ -60,8 +38,22 @@ export function ShowcaseSection() {
               </p>
             </div>
           </FadeIn>
+        </div>
+
+        {/* Row 3: Weekly Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
+          <FadeIn>
+            <div className="space-y-4">
+              <h3 className="text-2xl md:text-3xl font-bold tracking-tight">
+                Get weekly stats
+              </h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Review your weekly and monthly stats to identify patterns. Are you hitting your deep work goals, or are shallow tasks taking over? Visualize your focus and adjust.
+              </p>
+            </div>
+          </FadeIn>
           <FadeIn delay={150}>
-            <TasksInboxMockup />
+            <WeeklyStatsMockup />
           </FadeIn>
         </div>
       </div>
@@ -69,44 +61,6 @@ export function ShowcaseSection() {
   );
 }
 
-function DepthRatingMockup() {
-  const blocks = [
-    { title: 'Deep work building product', duration: '1h 45m', rating: 'deep', ratingColor: 'text-green-500' },
-    { title: 'Code review + PR feedback', duration: '45m', rating: 'ok', ratingColor: 'text-yellow-500' },
-    { title: 'Slack + email triage', duration: '30m', rating: 'wasted', ratingColor: 'text-red-500' },
-    { title: 'Landing page polish', duration: '1h 10m', rating: 'deep', ratingColor: 'text-green-500' },
-  ];
-  return (
-    <div className="rounded-xl border border-border bg-card p-6 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5">
-      <div className="flex items-baseline justify-between mb-5">
-        <h2 className="text-[18px] font-semibold tracking-[-0.02em]">Today</h2>
-        <div className="text-xs text-muted-foreground">
-          <span className="text-foreground font-semibold">2h 55m</span> deep · 4h 10m total
-        </div>
-      </div>
-      <div className="space-y-1">
-        {blocks.map((b) => (
-          <div
-            key={b.title}
-            className="flex items-start gap-3 py-3 group hover:bg-foreground/[0.03] rounded-md px-2 -mx-2 transition-colors"
-          >
-            <div className="text-sm text-muted-foreground font-mono w-24 shrink-0 pt-0.5 select-none text-left">
-              {b.duration}
-            </div>
-            <div className="w-20 shrink-0 pt-0.5 text-left">
-              <span className={`text-sm font-mono select-none ${b.ratingColor}`}>
-                {b.rating}
-              </span>
-            </div>
-            <div className="flex-1 min-w-0 text-left">
-              <p className="text-base font-light whitespace-pre-wrap break-words">{b.title}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 function TasksInboxMockup() {
   const tasks = [
@@ -145,16 +99,6 @@ function TasksInboxMockup() {
   );
 }
 
-function StepBadge({ step, label }: { step: string; label: string }) {
-  return (
-    <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted/50 px-3 py-1">
-      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-        {step}
-      </span>
-      <span className="text-xs font-medium text-muted-foreground">{label}</span>
-    </div>
-  );
-}
 
 function WorkBlockMockup() {
   return (
@@ -190,6 +134,54 @@ function WorkBlockMockup() {
           <div className="h-9 px-4 rounded-lg bg-primary flex items-center justify-center">
             <span className="text-sm font-medium text-primary-foreground">Start</span>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function WeeklyStatsMockup() {
+  const focusSegments = [
+    { score: 5, bg: 'bg-[#1DB954]', dot: 'bg-[#1DB954]', label: 'Deep', value: '18h 45m', pct: 60 },
+    { score: 4, bg: 'bg-[#8DC63F]', dot: 'bg-[#8DC63F]', label: 'Good', value: '4h 10m', pct: 15 },
+    { score: 3, bg: 'bg-yellow-400', dot: 'bg-yellow-400', label: 'Okay', value: '2h 15m', pct: 15 },
+    { score: 1, bg: 'bg-red-500', dot: 'bg-red-500', label: 'Wasted', value: '1h 20m', pct: 10 },
+  ];
+
+  return (
+    <div className="rounded-xl border border-border bg-card p-6 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5">
+      <div className="space-y-5">
+        <div className="flex items-baseline gap-3">
+          <span className="text-4xl md:text-5xl font-light text-foreground leading-none tracking-tight tabular-nums">
+            26h 30m
+          </span>
+          <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+            total
+          </span>
+        </div>
+
+        <div className="flex h-3 w-full rounded-full overflow-hidden gap-0.5 my-6">
+          {focusSegments.map((seg, i) => (
+            <div
+              key={i}
+              className={`${seg.bg} first:rounded-l-full last:rounded-r-full transition-all duration-300`}
+              style={{ width: `${seg.pct}%` }}
+            />
+          ))}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3 pt-2">
+          {focusSegments.map((seg, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <div className={`w-2.5 h-2.5 rounded-full ${seg.dot}`} />
+              <span className="text-sm text-foreground/50">
+                {seg.label}{' '}
+                <span className="font-mono tabular-nums text-foreground/80 ml-0.5">
+                  {seg.value}
+                </span>
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     </div>

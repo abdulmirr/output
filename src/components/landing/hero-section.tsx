@@ -6,7 +6,7 @@ import { FadeIn } from './fade-in';
 
 export function HeroSection() {
   return (
-    <section className="relative pt-32 pb-20 md:pt-44 md:pb-32 overflow-hidden">
+    <section className="relative pt-32 pb-12 md:pt-44 md:pb-16 overflow-hidden">
       {/* Animated gradient orb */}
       <div className="landing-orb" aria-hidden="true" />
 
@@ -61,12 +61,25 @@ export function HeroSection() {
 
 function HeroMockup() {
   const [step, setStep] = useState(0);
+  const [openProgress, setOpenProgress] = useState(0);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setStep((s) => (s + 1) % 7); // 7 steps in sequence
-    }, 1200);
-    return () => clearInterval(timer);
+    setMounted(true);
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      
+      const progress = Math.min(1, Math.max(0, scrollY / 100));
+      setOpenProgress(progress);
+
+      const calculatedStep = Math.min(6, Math.max(0, Math.floor((scrollY - 100) / 80)));
+      setStep(calculatedStep);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const allBlocks = [
@@ -77,27 +90,44 @@ function HeroMockup() {
   
   const finalBlock = { title: 'Landing page redesign', duration: '1h 10m', rating: 'deep', ratingColor: 'text-green-500' };
 
+  const d = new Date();
+  const month = d.toLocaleDateString('en-US', { month: 'long' });
+  const shortMonth = d.toLocaleDateString('en-US', { month: 'short' });
+  const day = d.getDate();
+  const dow = d.toLocaleDateString('en-US', { weekday: 'long' });
+
+  const tabText = mounted ? `Output — ${dow}, ${shortMonth} ${day}` : 'Output — Wednesday, Apr 16';
+  const headerDate = mounted ? `${month} ${day}` : 'April 16';
+  const headerDow = mounted ? dow : 'Wednesday';
+
+
   return (
-    <div className="rounded-2xl border border-border bg-card/80 backdrop-blur-sm shadow-2xl shadow-black/5 dark:shadow-black/20 overflow-hidden min-h-[360px]">
+    <div 
+      className="rounded-2xl border border-border bg-card/80 backdrop-blur-sm shadow-2xl shadow-black/5 dark:shadow-black/20 overflow-hidden min-h-[360px] transform-gpu"
+      style={{
+        opacity: openProgress,
+        transform: `translateY(${(1 - openProgress) * 40}px) scale(${0.96 + (openProgress * 0.04)})`
+      }}
+    >
       {/* Window chrome */}
       <div className="flex items-center gap-1.5 px-4 py-3 border-b border-border">
         <div className="h-2.5 w-2.5 rounded-full bg-border" />
         <div className="h-2.5 w-2.5 rounded-full bg-border" />
         <div className="h-2.5 w-2.5 rounded-full bg-border" />
-        <span className="ml-3 text-[11px] text-muted-foreground font-medium">Output — Wednesday, Apr 16</span>
+        <span className="ml-3 text-[11px] text-muted-foreground font-medium">{tabText}</span>
       </div>
 
       {/* Content */}
       <div className="p-6 md:p-8">
         <div className="flex items-baseline justify-between mb-6">
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight">April 16</h2>
-            <p className="text-sm text-muted-foreground mt-0.5">Wednesday</p>
+            <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">{headerDate}</h2>
+            <p className="text-sm text-muted-foreground mt-0.5">{headerDow}</p>
           </div>
-          <div className="text-right text-xs text-muted-foreground transition-opacity duration-500">
-            <span className="text-foreground font-semibold text-sm">{step >= 6 ? '2h 55m' : '1h 45m'}</span> deep
-            <span className="mx-1.5">·</span>
-            <span className="text-foreground font-semibold text-sm">{step >= 6 ? '4h 10m' : '3h 0m'}</span> total
+          <div className="text-right transition-opacity duration-500 flex items-center justify-end mt-1 md:mt-0">
+            <span className="text-base font-light text-muted-foreground tracking-tight tabular-nums">
+              {step >= 5 ? '4h 10m' : step >= 3 ? '3h 0m' : step >= 2 ? '2h 30m' : step >= 1 ? '1h 45m' : '0m'} today
+            </span>
           </div>
         </div>
 
@@ -123,29 +153,25 @@ function HeroMockup() {
 
           {/* Animating final block */}
           <div
-            className={`flex items-start gap-3 py-3 group hover:bg-foreground/[0.03] rounded-md px-2 -mx-2 transition-all duration-500 transform ${step >= 4 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+            className={`flex items-start gap-3 py-3 group hover:bg-foreground/[0.03] rounded-md px-2 -mx-2 transition-all duration-500 transform ${step >= 4 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}
           >
-            {step >= 4 && (
-              <>
-                <div className="text-sm text-muted-foreground font-mono w-28 shrink-0 pt-0.5 select-none">
-                  {step >= 5 ? finalBlock.duration : '1h 10m (timer)'}
-                </div>
-                <div className="w-24 shrink-0 pt-0.5">
-                  {step === 4 ? (
-                    <span className="text-sm font-mono select-none text-muted-foreground/50 animate-pulse">
-                      In progress
-                    </span>
-                  ) : step >= 5 ? (
-                    <span className={`text-sm font-mono select-none ${finalBlock.ratingColor} animate-in fade-in zoom-in duration-300`}>
-                      {finalBlock.rating}
-                    </span>
-                  ) : null}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-base font-light whitespace-pre-wrap break-words">{finalBlock.title}</p>
-                </div>
-              </>
-            )}
+            <div className="text-sm text-muted-foreground font-mono w-28 shrink-0 pt-0.5 select-none">
+              {step >= 5 ? finalBlock.duration : '1h 10m (timer)'}
+            </div>
+            <div className="w-24 shrink-0 pt-0.5">
+              {step < 5 ? (
+                <span className="text-sm font-mono select-none text-muted-foreground/50 animate-pulse">
+                  In progress
+                </span>
+              ) : (
+                <span className={`text-sm font-mono select-none ${finalBlock.ratingColor} animate-in fade-in zoom-in duration-300`}>
+                  {finalBlock.rating}
+                </span>
+              )}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-base font-light whitespace-pre-wrap break-words">{finalBlock.title}</p>
+            </div>
           </div>
         </div>
       </div>
