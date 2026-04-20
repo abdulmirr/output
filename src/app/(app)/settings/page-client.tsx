@@ -8,6 +8,9 @@ import { useThemeStore } from '@/stores/theme-store';
 import { createClient } from '@/lib/supabase/client';
 import { updateProfile, signOut } from './actions';
 import { DeleteAccountDialog } from '@/components/settings/delete-account-dialog';
+import { ShortcutRecorder } from '@/components/settings/shortcut-recorder';
+import { useShortcutStore } from '@/stores/shortcut-store';
+import { HOTKEYS } from '@/lib/constants';
 import type { UserProfile, UserRole } from '@/lib/types';
 
 interface SettingsPageClientProps {
@@ -23,13 +26,6 @@ const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
   { value: 'other', label: 'Other' },
 ];
 
-const SHORTCUTS: { keys: string[]; description: string }[] = [
-  { keys: ['\u2318', '\u21e7', 'O'], description: 'Start or show work block' },
-  { keys: ['\u2318', '\u21e7', 'N'], description: 'Add a new task' },
-  { keys: ['\u2318', '/'], description: 'Show keyboard shortcuts' },
-  { keys: ['Esc'], description: 'Close overlay / minimize' },
-  { keys: ['\u23ce'], description: 'Submit or confirm' },
-];
 
 function getBrowserTimezone(): string {
   try {
@@ -92,6 +88,11 @@ function formatZoneNow(tz: string): string {
 
 export function SettingsPageClient({ profile }: SettingsPageClientProps) {
   const { theme, setTheme } = useThemeStore();
+  const {
+    addTaskShortcut,
+    setAddTaskShortcut,
+    resetAddTaskShortcut,
+  } = useShortcutStore();
 
   const [displayName, setDisplayName] = useState(profile.displayName ?? '');
   const [avatarUrl, setAvatarUrl] = useState<string | null>(profile.avatarUrl);
@@ -373,29 +374,34 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         </h2>
 
         <div className="space-y-0">
-          {SHORTCUTS.map((s, i) => (
-            <div
-              key={s.description}
-              className={cn(
-                'flex items-center justify-between py-3',
-                i !== 0 && 'border-t border-foreground/[0.06]'
-              )}
-            >
-              <span className="text-base font-light text-foreground/70">
-                {s.description}
-              </span>
-              <div className="flex items-center gap-1">
-                {s.keys.map((key) => (
-                  <kbd
-                    key={key}
-                    className="px-1.5 py-0.5 text-[11px] font-mono text-foreground/60"
-                  >
-                    {key}
-                  </kbd>
-                ))}
-              </div>
-            </div>
-          ))}
+          <StaticShortcutRow
+            description="Start or show work block"
+            keys={['\u2318', '\u21e7', 'O']}
+            isFirst
+          />
+          <div className="flex items-center justify-between py-3 border-t border-foreground/[0.06]">
+            <span className="text-base font-light text-foreground/70">
+              Add a new task
+            </span>
+            <ShortcutRecorder
+              value={addTaskShortcut}
+              defaultValue={HOTKEYS.ADD_TASK}
+              onChange={setAddTaskShortcut}
+              onReset={resetAddTaskShortcut}
+            />
+          </div>
+          <StaticShortcutRow
+            description="Show keyboard shortcuts"
+            keys={['\u2318', '/']}
+          />
+          <StaticShortcutRow
+            description="Close overlay / minimize"
+            keys={['Esc']}
+          />
+          <StaticShortcutRow
+            description="Submit or confirm"
+            keys={['\u23ce']}
+          />
         </div>
       </section>
 
@@ -436,6 +442,39 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         onOpenChange={setDeleteOpen}
         email={profile.email}
       />
+    </div>
+  );
+}
+
+function StaticShortcutRow({
+  description,
+  keys,
+  isFirst,
+}: {
+  description: string;
+  keys: string[];
+  isFirst?: boolean;
+}) {
+  return (
+    <div
+      className={cn(
+        'flex items-center justify-between py-3',
+        !isFirst && 'border-t border-foreground/[0.06]'
+      )}
+    >
+      <span className="text-base font-light text-foreground/70">
+        {description}
+      </span>
+      <div className="flex items-center gap-1">
+        {keys.map((key) => (
+          <kbd
+            key={key}
+            className="px-1.5 py-0.5 text-[11px] font-mono text-foreground/60"
+          >
+            {key}
+          </kbd>
+        ))}
+      </div>
     </div>
   );
 }

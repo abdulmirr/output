@@ -1,6 +1,6 @@
 export const HOTKEYS = {
   TOGGLE_WORK_BLOCK: 'meta+shift+o',
-  ADD_TASK: 'meta+shift+p',
+  ADD_TASK: 'meta+shift+u',
   KEYBOARD_SHORTCUTS: 'meta+/',
 } as const;
 

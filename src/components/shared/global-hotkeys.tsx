@@ -4,11 +4,13 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { useOverlayStore } from '@/stores/overlay-store';
 import { useWorkBlockStore } from '@/stores/work-block-store';
 import { useTaskStore } from '@/stores/task-store';
+import { useShortcutStore } from '@/stores/shortcut-store';
 
 export function GlobalHotkeys() {
   const { toggle, open, close, activeOverlay } = useOverlayStore();
   const workBlockPhase = useWorkBlockStore((s) => s.phase);
   const selectedTaskId = useTaskStore((s) => s.selectedTaskId);
+  const addTaskShortcut = useShortcutStore((s) => s.addTaskShortcut);
 
   useHotkeys(
     'meta+shift+o',
@@ -28,12 +30,13 @@ export function GlobalHotkeys() {
   );
 
   useHotkeys(
-    'meta+shift+n',
+    addTaskShortcut,
     (e) => {
       e.preventDefault();
       toggle('task-creation');
     },
-    { enableOnFormTags: false }
+    { enableOnFormTags: false },
+    [addTaskShortcut]
   );
 
   useHotkeys(

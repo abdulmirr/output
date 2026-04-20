@@ -9,6 +9,8 @@ import { TaskCreationDialog } from '@/components/tasks/task-creation-dialog';
 import { TaskDetailPanel } from '@/components/tasks/task-detail-panel';
 import { useTaskStore } from '@/stores/task-store';
 import { useOverlayStore } from '@/stores/overlay-store';
+import { useShortcutStore } from '@/stores/shortcut-store';
+import { formatShortcutText } from '@/lib/shortcut-utils';
 import type { Task, TaskFolder } from '@/lib/types';
 import {
   toggleTask as toggleTaskAction,
@@ -27,6 +29,7 @@ import {
   CollisionDetection,
 } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
+import { useTourTarget, useTourAdvance } from '@/components/tour/use-tour';
 
 interface TasksPageClientProps {
   initialTasks: Task[];
@@ -63,9 +66,12 @@ export function TasksPageClient({
     selectedTaskId,
   } = useTaskStore();
   const { activeOverlay, close: closeOverlay } = useOverlayStore();
+  const addTaskShortcut = useShortcutStore((s) => s.addTaskShortcut);
   const [, startTransition] = useTransition();
 
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const addBtnRef = useTourTarget('tasks.add-button');
+  const tourAdvance = useTourAdvance();
 
   const [activeView, setActiveView] = useState<string>(() => {
     const inbox = initialFolders.find((f) => f.name === 'Inbox' && f.isDefault);
@@ -113,7 +119,9 @@ export function TasksPageClient({
     startTransition(async () => {
       await toggleTaskAction(id, task.status);
     });
-  }, [tasks, updateTaskOptimistic]);
+
+    tourAdvance('tasks.first-row');
+  }, [tasks, updateTaskOptimistic, tourAdvance]);
 
   const handleDelete = useCallback((id: string) => {
     deleteTaskOptimistic(id);
@@ -230,14 +238,18 @@ export function TasksPageClient({
           {activeView !== 'completed' && (
             <div className="relative">
               <button
-                onClick={handleOpenCreate}
+                ref={addBtnRef}
+                onClick={() => {
+                  handleOpenCreate();
+                  tourAdvance('tasks.add-button');
+                }}
                 className="rounded-lg bg-foreground text-background px-4 py-1.5 text-sm font-medium hover:bg-foreground/90 transition-colors shadow-sm"
                 title="Add task"
               >
                 + Add Task
               </button>
               <span className="absolute top-full right-0 mt-1.5 text-[11px] text-foreground/40 font-mono whitespace-nowrap">
-                Cmd+Shift+P
+                {formatShortcutText(addTaskShortcut)}
               </span>
             </div>
           )}

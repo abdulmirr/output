@@ -6,24 +6,28 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { useShortcutStore } from '@/stores/shortcut-store';
+import { formatShortcutText } from '@/lib/shortcut-utils';
 
 interface KeyboardShortcutsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-const shortcuts = [
-  { keys: ['Cmd', 'Shift', 'O'], description: 'Start / show work block' },
-  { keys: ['Cmd', 'Shift', 'P'], description: 'Add a new task' },
-  { keys: ['Cmd', '/'], description: 'Show keyboard shortcuts' },
-  { keys: ['Esc'], description: 'Close overlay / minimize' },
-  { keys: ['Enter'], description: 'Submit / confirm' },
-];
-
 export function KeyboardShortcutsDialog({
   open,
   onOpenChange,
 }: KeyboardShortcutsDialogProps) {
+  const addTaskShortcut = useShortcutStore((s) => s.addTaskShortcut);
+
+  const shortcuts = [
+    { keys: ['Cmd', 'Shift', 'O'], description: 'Start / show work block' },
+    { keys: formatShortcutText(addTaskShortcut).split('+'), description: 'Add a new task' },
+    { keys: ['Cmd', '/'], description: 'Show keyboard shortcuts' },
+    { keys: ['Esc'], description: 'Close overlay / minimize' },
+    { keys: ['Enter'], description: 'Submit / confirm' },
+  ];
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
