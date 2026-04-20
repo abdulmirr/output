@@ -11,7 +11,6 @@ const navItems = [
   { href: '/output', label: 'output', icon: Zap },
   { href: '/tasks', label: 'tasks', icon: CheckSquare },
   { href: '/stats', label: 'stats', icon: BarChart3 },
-  { href: '/feedback', label: 'feedback', icon: MessageCircleHeart },
 ];
 
 const pageTitles: Record<string, string> = {
@@ -162,8 +161,20 @@ export function Sidebar() {
           })}
         </nav>
 
-        {/* Bottom: settings */}
+        {/* Bottom: feedback + settings */}
         <div className="mt-auto px-3 pb-5 flex flex-col gap-0.5">
+          <Link
+            href="/feedback"
+            onClick={() => setNavOpen(false)}
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-base transition-colors ${
+              pathname === '/feedback' || pathname.startsWith('/feedback/')
+                ? 'bg-foreground/[0.07] font-normal text-foreground'
+                : 'font-light text-foreground/60 hover:bg-foreground/[0.04] hover:text-foreground'
+            }`}
+          >
+            <MessageCircleHeart strokeWidth={1.25} className="h-4.5 w-4.5" />
+            feedback
+          </Link>
           <Link
             href="/settings"
             onClick={() => setNavOpen(false)}

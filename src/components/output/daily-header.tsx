@@ -100,15 +100,15 @@ export function DailyHeader({ date }: DailyHeaderProps) {
               onClick={handleRestore}
             />
           ) : isToday ? (
-            <div className="flex flex-col items-end gap-1.5">
+            <div className="relative">
               <button
                 onClick={handleStartWorkBlock}
-                className="rounded-xl bg-foreground text-background px-5 py-2.5 text-sm font-medium hover:bg-foreground/90 transition-colors shadow-sm"
+                className="rounded-lg bg-foreground text-background px-4 py-1.5 text-sm font-medium hover:bg-foreground/90 transition-colors shadow-sm"
                 title="Start work block"
               >
                 + Start work block
               </button>
-              <span className="text-[11px] text-foreground/40 font-mono">
+              <span className="absolute top-full right-0 mt-1.5 text-[11px] text-foreground/40 font-mono whitespace-nowrap">
                 Cmd+Shift+O
               </span>
             </div>
