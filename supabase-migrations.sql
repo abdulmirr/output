@@ -56,3 +56,17 @@ alter table public.profiles
   add column if not exists work_window text
     check (work_window in ('mornings', 'afternoons', 'evenings', 'split', 'flexible')),
   add column if not exists tour_progress jsonb not null default '{}'::jsonb;
+
+-- ============================================
+-- Fix theme check constraint to include 'light-grid'
+-- ============================================
+-- The app uses 'light-grid' as its default theme, but the original constraint
+-- only allowed ('light', 'dark', 'system'). Any UPDATE to a profiles row
+-- (e.g. resetting tour progress) fails because PostgreSQL re-evaluates all
+-- check constraints on the row.
+alter table public.profiles
+  drop constraint if exists profiles_theme_check;
+
+alter table public.profiles
+  add constraint profiles_theme_check
+  check (theme in ('light-grid', 'light', 'dark', 'system'));

@@ -12,7 +12,7 @@ create table if not exists public.profiles (
   email text not null,
   display_name text,
   avatar_url text,
-  theme text default 'system' check (theme in ('light', 'dark', 'system')),
+  theme text default 'light-grid' check (theme in ('light-grid', 'light', 'dark', 'system')),
   created_at timestamptz default now() not null,
   role text check (role in ('founder', 'developer', 'designer', 'student', 'creator', 'other')),
   daily_goal_hours integer default 4 check (daily_goal_hours between 1 and 8),
