@@ -96,8 +96,8 @@ export function FeedbackPageClient() {
 
         <p className="leading-tight">thanks,<br />abdul</p>
 
-        <div className="pt-6 w-1/2">
-          <div className="relative w-full aspect-[4/3] overflow-hidden rounded-[6px]">
+        <div className="pt-6 w-[40%]">
+          <div className="relative w-full aspect-[4/3] overflow-hidden">
             <Image
               src="/abdul.jpg"
               alt="Abdul"
@@ -192,12 +192,14 @@ export function FeedbackPageClient() {
           On the roadmap
         </h2>
 
-        <ul className="space-y-1.5">
+        <ul className="space-y-3">
           {ROADMAP.map((item) => (
-            <li key={item.title}>
-              <p className="text-xs font-mono text-foreground/40">
-                <span className="text-foreground/70">{item.title}</span> — {item.body}
-              </p>
+            <li key={item.title} className="flex items-start gap-2">
+              <span className="mt-[0.35rem] h-1 w-1 shrink-0 rounded-full bg-foreground/40" />
+              <div>
+                <p className="text-xs font-mono text-foreground/70">{item.title}</p>
+                <p className="text-xs font-mono text-foreground/40">{item.body}</p>
+              </div>
             </li>
           ))}
         </ul>
