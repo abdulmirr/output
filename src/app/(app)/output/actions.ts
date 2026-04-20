@@ -1,8 +1,26 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { updateTag } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
+import { TAG } from '@/lib/api/queries';
 import { z } from 'zod';
+
+function invalidateBlocks() {
+  updateTag(TAG.blocks);
+}
+
+function invalidateDailyLogs() {
+  updateTag(TAG.dailyLogs);
+}
+
+function invalidateDailyTodos() {
+  updateTag(TAG.dailyTodos);
+}
+
+function invalidateLogOff() {
+  updateTag(TAG.dailyLogs);
+  updateTag(TAG.dailyTodos);
+}
 
 const ISO_DATETIME = z.iso.datetime({ offset: true });
 const DATE_STRING = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Must be YYYY-MM-DD');
@@ -72,7 +90,7 @@ export async function saveWorkBlock(block: {
   });
 
   if (error) return { error: error.message };
-  revalidatePath('/output');
+  invalidateBlocks();
   return { success: true };
 }
 
@@ -111,7 +129,7 @@ export async function addManualBlock(data: {
   });
 
   if (error) return { error: error.message };
-  revalidatePath('/output');
+  invalidateBlocks();
   return { success: true };
 }
 
@@ -147,6 +165,7 @@ export async function updateDailyThoughts(date: string, thoughts: string) {
     if (error) return { error: error.message };
   }
 
+  invalidateDailyLogs();
   return { success: true };
 }
 
@@ -248,7 +267,7 @@ export async function logOff(data: {
     if (todoError) return { error: todoError.message };
   }
 
-  revalidatePath('/output');
+  invalidateLogOff();
   return { success: true, logId };
 }
 
@@ -296,7 +315,7 @@ export async function addDailyTodo(date: string, taskText: string) {
   });
 
   if (error) return { error: error.message };
-  revalidatePath('/output');
+  invalidateDailyTodos();
   return { success: true };
 }
 
@@ -315,7 +334,7 @@ export async function toggleDailyTodo(id: string, completed: boolean) {
     .eq('user_id', user.id);
 
   if (error) return { error: error.message };
-  revalidatePath('/output');
+  invalidateDailyTodos();
   return { success: true };
 }
 
@@ -334,7 +353,7 @@ export async function removeDailyTodo(id: string) {
     .eq('user_id', user.id);
 
   if (error) return { error: error.message };
-  revalidatePath('/output');
+  invalidateDailyTodos();
   return { success: true };
 }
 
@@ -382,7 +401,7 @@ export async function updateWorkBlock(id: string, data: {
     .eq('user_id', user.id);
 
   if (error) return { error: error.message };
-  revalidatePath('/output');
+  invalidateBlocks();
   return { success: true };
 }
 
@@ -403,7 +422,7 @@ export async function updateWorkBlockQuality(id: string, quality: 'deep' | 'meh'
     .eq('user_id', user.id);
 
   if (error) return { error: error.message };
-  revalidatePath('/output');
+  invalidateBlocks();
   return { success: true };
 }
 
@@ -424,7 +443,7 @@ export async function updateWorkBlockFocusScore(id: string, focusScore: number |
     .eq('user_id', user.id);
 
   if (error) return { error: error.message };
-  revalidatePath('/output');
+  invalidateBlocks();
   return { success: true };
 }
 
@@ -443,7 +462,7 @@ export async function removeWorkBlock(id: string) {
     .eq('user_id', user.id);
 
   if (error) return { error: error.message };
-  revalidatePath('/output');
+  invalidateBlocks();
   return { success: true };
 }
 
@@ -467,7 +486,7 @@ export async function reorderDailyTodos(orderedIds: string[]) {
   const failed = results.find((r) => r.error);
   if (failed?.error) return { error: failed.error.message };
 
-  revalidatePath('/output');
+  invalidateDailyTodos();
   return { success: true };
 }
 
@@ -525,7 +544,7 @@ export async function moveDailyTodoToTomorrow(id: string) {
     .eq('user_id', user.id);
 
   if (error) return { error: error.message };
-  revalidatePath('/output');
+  invalidateDailyTodos();
   return { success: true };
 }
 
@@ -546,6 +565,6 @@ export async function updateDailyTodo(id: string, taskText: string) {
     .eq('user_id', user.id);
 
   if (error) return { error: error.message };
-  revalidatePath('/output');
+  invalidateDailyTodos();
   return { success: true };
 }

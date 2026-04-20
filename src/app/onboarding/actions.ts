@@ -1,8 +1,9 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { updateTag } from 'next/cache';
 import { cookies } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
+import { TAG } from '@/lib/api/queries';
 import { z } from 'zod';
 
 const RoleSchema = z.enum(['founder', 'developer', 'designer', 'student', 'creator', 'other']);
@@ -78,7 +79,7 @@ export async function completeOnboarding(options?: { startTour?: boolean }) {
     path: '/',
   });
 
-  revalidatePath('/', 'layout');
+  updateTag(TAG.profile);
   return { success: true };
 }
 
@@ -153,7 +154,7 @@ export async function resetTour() {
     .eq('id', user.id);
 
   if (error) return { error: 'Could not reset tour' };
-  revalidatePath('/', 'layout');
+  updateTag(TAG.profile);
   return { success: true };
 }
 
@@ -168,6 +169,6 @@ export async function markFirstBlockCompleted() {
     .eq('id', user.id);
 
   if (error) return { error: 'Could not update profile' };
-  revalidatePath('/', 'layout');
+  updateTag(TAG.profile);
   return { success: true };
 }

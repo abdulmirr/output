@@ -1,10 +1,27 @@
+import { cache } from 'react';
+import { cacheLife, cacheTag } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import type { WorkBlock, Task, TaskFolder, DailyLog, DailyTodo, UserProfile, TourProgress, WorkWindow } from '@/lib/types';
 import { getLocalDayUtcRange } from '@/lib/utils';
 
+// ── Tag constants ──
+
+export const TAG = {
+  profile: 'profile',
+  blocks: 'blocks',
+  tasks: 'tasks',
+  folders: 'folders',
+  dailyLogs: 'daily-logs',
+  dailyTodos: 'daily-todos',
+} as const;
+
 // ── Work Blocks ──
 
 export async function getBlocksForDate(date: string, tzOffsetMinutes = 0): Promise<WorkBlock[]> {
+  'use cache: private';
+  cacheTag(TAG.blocks, `${TAG.blocks}:${date}`);
+  cacheLife('minutes');
+
   const supabase = await createClient();
   const { startUtc, endUtc } = getLocalDayUtcRange(date, tzOffsetMinutes);
   const { data, error } = await supabase
@@ -20,6 +37,10 @@ export async function getBlocksForDate(date: string, tzOffsetMinutes = 0): Promi
 }
 
 export async function getAllBlocks(): Promise<WorkBlock[]> {
+  'use cache: private';
+  cacheTag(TAG.blocks);
+  cacheLife('minutes');
+
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('work_blocks')
@@ -31,9 +52,30 @@ export async function getAllBlocks(): Promise<WorkBlock[]> {
   return (data || []).map(mapWorkBlock);
 }
 
+export async function getBlocksSince(sinceUtcISO: string): Promise<WorkBlock[]> {
+  'use cache: private';
+  cacheTag(TAG.blocks);
+  cacheLife('minutes');
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('work_blocks')
+    .select('*')
+    .eq('status', 'completed')
+    .gte('start_time', sinceUtcISO)
+    .order('start_time', { ascending: false });
+
+  if (error) throw error;
+  return (data || []).map(mapWorkBlock);
+}
+
 // ── Task Folders ──
 
 export async function getTaskFolders(): Promise<TaskFolder[]> {
+  'use cache: private';
+  cacheTag(TAG.folders);
+  cacheLife('hours');
+
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('task_folders')
@@ -47,6 +89,10 @@ export async function getTaskFolders(): Promise<TaskFolder[]> {
 // ── Tasks ──
 
 export async function getTasks(): Promise<Task[]> {
+  'use cache: private';
+  cacheTag(TAG.tasks);
+  cacheLife('minutes');
+
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('tasks')
@@ -59,6 +105,10 @@ export async function getTasks(): Promise<Task[]> {
 }
 
 export async function getCompletedTasks(): Promise<Task[]> {
+  'use cache: private';
+  cacheTag(TAG.tasks);
+  cacheLife('minutes');
+
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('tasks')
@@ -73,6 +123,10 @@ export async function getCompletedTasks(): Promise<Task[]> {
 // ── Daily Logs ──
 
 export async function getDailyLog(date: string): Promise<DailyLog | null> {
+  'use cache: private';
+  cacheTag(TAG.dailyLogs, `${TAG.dailyLogs}:${date}`);
+  cacheLife('minutes');
+
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('daily_logs')
@@ -85,6 +139,10 @@ export async function getDailyLog(date: string): Promise<DailyLog | null> {
 }
 
 export async function getAllDailyLogs(): Promise<Record<string, DailyLog>> {
+  'use cache: private';
+  cacheTag(TAG.dailyLogs);
+  cacheLife('minutes');
+
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('daily_logs')
@@ -100,9 +158,34 @@ export async function getAllDailyLogs(): Promise<Record<string, DailyLog>> {
   return logs;
 }
 
+export async function getDailyLogsSince(sinceDate: string): Promise<Record<string, DailyLog>> {
+  'use cache: private';
+  cacheTag(TAG.dailyLogs);
+  cacheLife('minutes');
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('daily_logs')
+    .select('*')
+    .gte('date', sinceDate)
+    .order('date', { ascending: false });
+
+  if (error) throw error;
+  const logs: Record<string, DailyLog> = {};
+  (data || []).forEach((row) => {
+    const log = mapDailyLog(row);
+    logs[log.date] = log;
+  });
+  return logs;
+}
+
 // ── Daily Todos ──
 
 export async function getTodosForDate(date: string): Promise<DailyTodo[]> {
+  'use cache: private';
+  cacheTag(TAG.dailyTodos, `${TAG.dailyTodos}:${date}`);
+  cacheLife('minutes');
+
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('daily_todos')
@@ -115,6 +198,10 @@ export async function getTodosForDate(date: string): Promise<DailyTodo[]> {
 }
 
 export async function getAllDailyTodos(): Promise<DailyTodo[]> {
+  'use cache: private';
+  cacheTag(TAG.dailyTodos);
+  cacheLife('minutes');
+
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('daily_todos')
@@ -127,8 +214,11 @@ export async function getAllDailyTodos(): Promise<DailyTodo[]> {
 }
 
 // ── Profile ──
+// Kept as a per-request React cache() (not `use cache`) because it's used by
+// auth helpers (getTzOffsetMinutes) that themselves run inside tz-cookie paths.
+// The profile is read once per request via request-level memoization.
 
-export async function getProfile(): Promise<UserProfile | null> {
+export const getProfile = cache(async (): Promise<UserProfile | null> => {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
@@ -141,7 +231,7 @@ export async function getProfile(): Promise<UserProfile | null> {
 
   if (error) return null;
   return mapProfile(data);
-}
+});
 
 // ── Mappers (DB row → TypeScript interface) ──
 
@@ -242,4 +332,3 @@ function normalizeTourProgress(raw: unknown): TourProgress {
   const skipped = typeof r.skipped === 'boolean' ? r.skipped : false;
   return { stage, step, skipped };
 }
-

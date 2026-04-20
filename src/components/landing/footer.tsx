@@ -42,7 +42,7 @@ export function Footer() {
             Terms
           </Link>
           <span className="text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()}
+            &copy; 2025
           </span>
         </div>
       </div>

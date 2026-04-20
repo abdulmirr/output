@@ -8,6 +8,7 @@ import { Insights } from '@/components/stats/insights';
 
 interface StatsPageClientProps {
   data: StatsData;
+  windowDays: number;
 }
 
 function formatLifetimeRange(firstDateStr: string): string {
@@ -21,18 +22,19 @@ function formatLifetimeRange(firstDateStr: string): string {
   return `${firstDate.toLocaleDateString('en-US', opts)} – ${today.toLocaleDateString('en-US', opts)}`;
 }
 
-export function StatsPageClient({ data }: StatsPageClientProps) {
+export function StatsPageClient({ data, windowDays }: StatsPageClientProps) {
   const firstLoggedDate = Object.keys(data.days)
     .filter((d) => data.days[d].blockCount > 0)
     .sort()[0];
   const hasData = !!firstLoggedDate;
+  const windowLabel = `Last ${windowDays} days`;
 
   if (!hasData) {
     return (
       <div>
         <div className="space-y-1 mb-12 md:mb-16">
           <p className="text-xs font-mono uppercase tracking-wider text-foreground/40">
-            All-time overview
+            {windowLabel}
           </p>
         </div>
         <p className="text-base font-light text-foreground/50">
@@ -56,7 +58,7 @@ export function StatsPageClient({ data }: StatsPageClientProps) {
       <section className="space-y-8">
         <div className="space-y-1">
           <h2 className="text-sm font-normal uppercase tracking-wider text-foreground/70">
-            All-time overview
+            {windowLabel}
           </h2>
           <p className="text-xs font-mono text-foreground/40">
             {formatLifetimeRange(firstLoggedDate)}

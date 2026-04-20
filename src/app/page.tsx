@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { LandingNav } from "@/components/landing/landing-nav";
@@ -7,19 +8,24 @@ import { PlatformBanner } from "@/components/landing/platform-banner";
 import { Footer } from "@/components/landing/footer";
 import { BackgroundGrid } from "@/components/ui/background-snippets";
 
-export default async function Home() {
+async function AuthRedirect() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
+  if (user) redirect("/output");
+  return null;
+}
 
-  if (user) {
-    redirect("/output");
-  }
-
+export default function Home() {
   return (
     <div className="relative min-h-screen">
+      <Suspense fallback={null}>
+        <AuthRedirect />
+      </Suspense>
       <BackgroundGrid />
       <LandingNav />
-      <HeroSection />
+      <Suspense fallback={null}>
+        <HeroSection />
+      </Suspense>
       <PlatformBanner />
       <ShowcaseSection />
       <Footer />

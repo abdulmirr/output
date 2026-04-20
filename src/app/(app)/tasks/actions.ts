@@ -1,9 +1,20 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { updateTag } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
+import { TAG } from '@/lib/api/queries';
 import type { Task, TaskFolder } from '@/lib/types';
 import { z } from 'zod';
+
+function invalidateTasks() {
+  updateTag(TAG.tasks);
+  updateTag(TAG.dailyTodos);
+}
+
+function invalidateFolders() {
+  updateTag(TAG.folders);
+  updateTag(TAG.tasks);
+}
 
 const UUID = z.uuid();
 const DATE_STRING = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Must be YYYY-MM-DD');
@@ -143,8 +154,7 @@ export async function addTask(data: {
     completedAt: insertedTask.completed_at ? new Date(insertedTask.completed_at) : null,
   };
 
-  revalidatePath('/tasks');
-  revalidatePath('/output');
+  invalidateTasks();
   return { success: true, task };
 }
 
@@ -168,7 +178,7 @@ export async function toggleTask(id: string, currentStatus: string) {
     .eq('user_id', user.id);
 
   if (error) return { error: error.message };
-  revalidatePath('/tasks');
+  invalidateTasks();
   return { success: true };
 }
 
@@ -187,7 +197,7 @@ export async function deleteTask(id: string) {
     .eq('user_id', user.id);
 
   if (error) return { error: error.message };
-  revalidatePath('/tasks');
+  invalidateTasks();
   return { success: true };
 }
 
@@ -256,8 +266,7 @@ export async function updateTask(
     }
   }
 
-  revalidatePath('/tasks');
-  revalidatePath('/output');
+  invalidateTasks();
   return { success: true };
 }
 
@@ -280,7 +289,7 @@ export async function updateTaskOrders(updates: { id: string; sortOrder: number 
       .eq('user_id', user.id);
   }
 
-  revalidatePath('/tasks');
+  invalidateTasks();
   return { success: true };
 }
 
@@ -316,7 +325,7 @@ export async function addFolder(name: string, icon: string) {
   }).select().single();
 
   if (error) return { error: error.message };
-  revalidatePath('/tasks');
+  invalidateFolders();
 
   const folder: TaskFolder = {
     id: insertedFolder.id,
@@ -362,6 +371,6 @@ export async function deleteFolder(id: string) {
     .eq('is_default', false);
 
   if (error) return { error: error.message };
-  revalidatePath('/tasks');
+  invalidateFolders();
   return { success: true };
 }

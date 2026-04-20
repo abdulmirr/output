@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation';
 import { Menu, X, Zap, CheckSquare, BarChart3, MessageCircleHeart, Settings, ChevronsLeft } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { ThemeToggle } from './theme-toggle';
-import { createClient } from '@/lib/supabase/client';
 
 const navItems = [
   { href: '/output', label: 'output', icon: Zap },
@@ -21,25 +20,10 @@ const pageTitles: Record<string, string> = {
   '/settings': 'Settings',
 };
 
-export function Sidebar() {
+export function Sidebar({ userSlot }: { userSlot: React.ReactNode }) {
   const pathname = usePathname();
   const [navOpen, setNavOpen] = useState(false);
-  const [user, setUser] = useState<{ name: string; email: string; avatar?: string } | null>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user) {
-        const meta = data.user.user_metadata;
-        setUser({
-          name: meta?.full_name || meta?.name || meta?.display_name || data.user.email?.split('@')[0] || 'User',
-          email: data.user.email ?? '',
-          avatar: meta?.avatar_url || meta?.picture || undefined,
-        });
-      }
-    });
-  }, []);
 
   // Derive page title from route
   const pageTitle = Object.entries(pageTitles).find(
@@ -105,20 +89,7 @@ export function Sidebar() {
         {/* User info at top */}
         <div className="px-5 pt-5 pb-4 flex items-center justify-between">
           <div className="flex items-center gap-3 overflow-hidden">
-            {user?.avatar ? (
-              <img
-                src={user.avatar}
-                alt={user.name}
-                className="h-8 w-8 shrink-0 rounded-full object-cover"
-              />
-            ) : (
-              <div className="h-8 w-8 shrink-0 rounded-full bg-foreground/10 flex items-center justify-center text-sm font-light text-foreground/60">
-                {user?.name?.charAt(0)?.toUpperCase() ?? '?'}
-              </div>
-            )}
-            <span className="text-base font-normal text-foreground truncate">
-              {user?.name ?? 'User'}
-            </span>
+            {userSlot}
           </div>
           <div className="flex items-center gap-1 shrink-0 -mr-1">
             <ThemeToggle className="p-1" />

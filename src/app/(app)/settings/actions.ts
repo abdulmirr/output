@@ -1,8 +1,9 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { updateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { TAG } from '@/lib/api/queries';
 import { z } from 'zod';
 
 const UpdateProfileSchema = z.object({
@@ -46,8 +47,7 @@ export async function updateProfile(data: {
     .eq('id', user.id);
 
   if (error) return { error: error.message };
-  revalidatePath('/settings');
-  revalidatePath('/', 'layout');
+  updateTag(TAG.profile);
   return { success: true };
 }
 

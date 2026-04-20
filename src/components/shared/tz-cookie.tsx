@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 
 interface TzCookieProps {
   profileTimezone?: string | null;
+  serverOffset: number;
 }
 
 function offsetForZone(tz: string): number | null {
@@ -36,7 +37,7 @@ function offsetForZone(tz: string): number | null {
   }
 }
 
-export function TzCookie({ profileTimezone }: TzCookieProps) {
+export function TzCookie({ profileTimezone, serverOffset }: TzCookieProps) {
   const router = useRouter();
 
   useEffect(() => {
@@ -44,11 +45,15 @@ export function TzCookie({ profileTimezone }: TzCookieProps) {
       (profileTimezone ? offsetForZone(profileTimezone) : null) ??
       new Date().getTimezoneOffset();
     const match = document.cookie.match(/(?:^|;\s*)tz_offset=(-?\d+)/);
-    const current = match ? parseInt(match[1], 10) : null;
-    if (current === offset) return;
-    document.cookie = `tz_offset=${offset}; path=/; max-age=31536000; samesite=lax`;
-    router.refresh();
-  }, [router, profileTimezone]);
+    const cookieOffset = match ? parseInt(match[1], 10) : null;
+    if (cookieOffset !== offset) {
+      document.cookie = `tz_offset=${offset}; path=/; max-age=31536000; samesite=lax`;
+    }
+    // Only refresh if the server rendered with a different offset than reality.
+    if (serverOffset !== offset) {
+      router.refresh();
+    }
+  }, [router, profileTimezone, serverOffset]);
 
   return null;
 }
