@@ -96,7 +96,7 @@ export function FeedbackPageClient() {
 
         <p className="leading-tight">thanks,<br />abdul</p>
 
-        <div className="pt-2 w-1/2">
+        <div className="pt-6 w-1/2">
           <div className="relative w-full aspect-[4/3] overflow-hidden rounded-[6px]">
             <Image
               src="/abdul.jpg"
@@ -187,34 +187,17 @@ export function FeedbackPageClient() {
       </section>
 
       {/* ROADMAP */}
-      <section className="space-y-6">
-        <div className="space-y-1">
-          <h2 className="text-sm font-normal uppercase tracking-wider text-foreground/70">
-            On the roadmap
-          </h2>
-          <p className="text-xs font-mono text-foreground/40">
-            What I&rsquo;m thinking about building next.
-          </p>
-        </div>
+      <section className="space-y-3">
+        <h2 className="text-sm font-normal uppercase tracking-wider text-foreground/70">
+          On the roadmap
+        </h2>
 
-        <ul className="space-y-0">
-          {ROADMAP.map((item, i) => (
-            <li
-              key={item.title}
-              className={cn(
-                'flex items-start gap-4 py-4',
-                i !== 0 && 'border-t border-foreground/[0.06]'
-              )}
-            >
-              <span className="mt-[0.6rem] h-1 w-1 shrink-0 rounded-full bg-foreground/40" />
-              <div className="space-y-1">
-                <p className="text-base font-normal text-foreground">
-                  {item.title}
-                </p>
-                <p className="text-sm font-light leading-relaxed text-foreground/60">
-                  {item.body}
-                </p>
-              </div>
+        <ul className="space-y-1.5">
+          {ROADMAP.map((item) => (
+            <li key={item.title}>
+              <p className="text-xs font-mono text-foreground/40">
+                <span className="text-foreground/70">{item.title}</span> — {item.body}
+              </p>
             </li>
           ))}
         </ul>
