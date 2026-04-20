@@ -4,6 +4,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useEffect, useRef, useState } from 'react';
 import { updateDailyThoughts } from '@/app/(app)/output/actions';
 import { ChevronDown, ChevronRight } from 'lucide-react';
+import { useTourTarget } from '@/components/tour/use-tour';
 
 interface ThoughtsSectionProps {
   initialThoughts: string;
@@ -14,6 +15,7 @@ export function ThoughtsSection({ initialThoughts, today }: ThoughtsSectionProps
   const [thoughts, setThoughts] = useState(initialThoughts);
   const [open, setOpen] = useState(!!initialThoughts);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const tourRef = useTourTarget('output.thoughts');
 
   const handleChange = (value: string) => {
     setThoughts(value);
@@ -30,7 +32,7 @@ export function ThoughtsSection({ initialThoughts, today }: ThoughtsSectionProps
   }, []);
 
   return (
-    <div className="space-y-2 mt-8">
+    <div ref={tourRef} className="space-y-2 mt-8">
       <div className="relative">
         <button
           onClick={() => setOpen((o) => !o)}

@@ -17,5 +17,10 @@ export default async function OnboardingPage() {
     redirect('/output');
   }
 
-  return <OnboardingWizard displayName={profile.displayName} />;
+  return (
+    <OnboardingWizard
+      displayName={profile.displayName}
+      preferredName={profile.preferredName}
+    />
+  );
 }

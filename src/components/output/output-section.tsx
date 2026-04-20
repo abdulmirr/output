@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import type { WorkBlock } from '@/lib/types';
 import { formatDuration } from '@/lib/utils';
+import { useTourTarget, useTourAdvance } from '@/components/tour/use-tour';
 
 interface OutputSectionProps {
   initialBlocks: WorkBlock[];
@@ -29,6 +30,8 @@ export function OutputSection({ initialBlocks, date }: OutputSectionProps) {
   const [editBlockId, setEditBlockId] = useState<string | null>(null);
   const [, startTransition] = useTransition();
   const router = useRouter();
+  const manualBtnRef = useTourTarget('output.manual-add-button');
+  const tourAdvance = useTourAdvance();
 
   const resetAdd = () => {
     setIsAdding(false);
@@ -246,7 +249,11 @@ export function OutputSection({ initialBlocks, date }: OutputSectionProps) {
         </div>
       ) : (
         <button
-          onClick={() => setIsAdding(true)}
+          ref={manualBtnRef}
+          onClick={() => {
+            setIsAdding(true);
+            tourAdvance('output.manual-add-button');
+          }}
           className="flex items-center justify-center w-6 h-6 rounded text-foreground/30 hover:text-foreground/60 transition-colors mt-2 -ml-1"
           title="Add block manually"
         >

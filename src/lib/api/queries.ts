@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
-import type { WorkBlock, Task, TaskFolder, DailyLog, DailyTodo, UserProfile } from '@/lib/types';
+import type { WorkBlock, Task, TaskFolder, DailyLog, DailyTodo, UserProfile, TourProgress, WorkWindow } from '@/lib/types';
 import { getLocalDayUtcRange } from '@/lib/utils';
 
 // ── Work Blocks ──
@@ -225,6 +225,21 @@ function mapProfile(row: any): UserProfile {
     timezone: row.timezone ?? null,
     onboardingCompleted: row.onboarding_completed ?? false,
     hasCompletedFirstBlock: row.has_completed_first_block ?? false,
+    preferredName: row.preferred_name ?? null,
+    focusArea: row.focus_area ?? null,
+    workWindow: (row.work_window ?? null) as WorkWindow | null,
+    tourProgress: normalizeTourProgress(row.tour_progress),
   };
+}
+
+function normalizeTourProgress(raw: unknown): TourProgress {
+  if (!raw || typeof raw !== 'object') {
+    return { stage: 'done', step: 0, skipped: false };
+  }
+  const r = raw as Record<string, unknown>;
+  const stage = r.stage === 'output' || r.stage === 'tasks' || r.stage === 'done' ? r.stage : 'done';
+  const step = typeof r.step === 'number' ? r.step : 0;
+  const skipped = typeof r.skipped === 'boolean' ? r.skipped : false;
+  return { stage, step, skipped };
 }
 

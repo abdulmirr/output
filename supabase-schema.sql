@@ -19,7 +19,11 @@ create table if not exists public.profiles (
   onboarding_completed boolean default false not null,
   has_completed_first_block boolean default false not null,
   onboarding_checklist_dismissed boolean default false not null,
-  timezone text
+  timezone text,
+  preferred_name text,
+  focus_area text,
+  work_window text check (work_window in ('mornings', 'afternoons', 'evenings', 'split', 'flexible')),
+  tour_progress jsonb not null default '{}'::jsonb
 );
 
 alter table public.profiles enable row level security;

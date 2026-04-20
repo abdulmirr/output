@@ -7,6 +7,9 @@ import { cn } from '@/lib/utils';
 import { useThemeStore } from '@/stores/theme-store';
 import { createClient } from '@/lib/supabase/client';
 import { updateProfile, signOut } from './actions';
+import { resetTour } from '@/app/onboarding/actions';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { DeleteAccountDialog } from '@/components/settings/delete-account-dialog';
 import { ShortcutRecorder } from '@/components/settings/shortcut-recorder';
 import { useShortcutStore } from '@/stores/shortcut-store';
@@ -104,8 +107,22 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
 
   const [uploading, setUploading] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [replayingTour, setReplayingTour] = useState(false);
   const [, startTransition] = useTransition();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+
+  const handleReplayTour = async () => {
+    setReplayingTour(true);
+    const result = await resetTour();
+    if (result?.error) {
+      setReplayingTour(false);
+      toast.error(result.error);
+      return;
+    }
+    router.push('/output');
+    router.refresh();
+  };
 
   const timezones = useMemo(() => getAllTimezones(), []);
   const [zoneNow, setZoneNow] = useState(() => formatZoneNow(timezone));
@@ -362,6 +379,29 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
               </button>
             ))}
           </div>
+        </Row>
+      </section>
+
+      <div className="h-px bg-foreground/[0.06]" />
+
+      {/* HELP */}
+      <section className="space-y-6">
+        <h2 className="text-sm font-normal uppercase tracking-wider text-foreground/70">
+          Help
+        </h2>
+
+        <Row
+          label="Product tour"
+          caption="Replay the guided walkthrough of Output and Tasks."
+        >
+          <button
+            type="button"
+            onClick={handleReplayTour}
+            disabled={replayingTour}
+            className="text-sm font-light text-foreground/70 hover:text-foreground transition-colors disabled:opacity-50"
+          >
+            {replayingTour ? 'Starting…' : 'Replay tour'}
+          </button>
         </Row>
       </section>
 

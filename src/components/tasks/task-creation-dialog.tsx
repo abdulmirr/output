@@ -11,6 +11,7 @@ import { parseDuration, formatDuration } from './duration-dialog';
 import { formatDate } from './date-dialog';
 import { X } from 'lucide-react';
 import type { Task } from '@/lib/types';
+import { useTourAdvance } from '@/components/tour/use-tour';
 
 interface TaskCreationDialogProps {
   visible: boolean;
@@ -133,6 +134,7 @@ export function TaskCreationDialog({ visible, onClose, activeFolderId, editingTa
   const [dateInput, setDateInput] = useState('');
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const tourAdvance = useTourAdvance();
 
   const { addTaskOptimistic, updateTaskOptimistic, folders } = useTaskStore();
 
@@ -211,6 +213,7 @@ export function TaskCreationDialog({ visible, onClose, activeFolderId, editingTa
         } else if (result.success && result.task) {
           toast.success('Task created!');
           addTaskOptimistic(result.task);
+          tourAdvance('tasks.detail-fields');
           handleReset();
           router.refresh();
         }

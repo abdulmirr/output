@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useOverlayStore } from '@/stores/overlay-store';
 import { useWorkBlockStore } from '@/stores/work-block-store';
 import { useRouter } from 'next/navigation';
+import { useTourTarget } from '@/components/tour/use-tour';
 
 interface DailyHeaderProps {
   date: string;
@@ -22,6 +23,7 @@ export function DailyHeader({ date }: DailyHeaderProps) {
   const openOverlay = useOverlayStore((s) => s.open);
   const workBlockPhase = useWorkBlockStore((s) => s.phase);
   const activeBlock = useWorkBlockStore((s) => s.activeBlock);
+  const startBtnRef = useTourTarget('output.start-block-cta');
   const isActive = workBlockPhase === 'active' || workBlockPhase === 'rating';
   const router = useRouter();
 
@@ -102,6 +104,7 @@ export function DailyHeader({ date }: DailyHeaderProps) {
           ) : isToday ? (
             <div className="relative">
               <button
+                ref={startBtnRef}
                 onClick={handleStartWorkBlock}
                 className="rounded-lg bg-foreground text-background px-4 py-1.5 text-sm font-medium hover:bg-foreground/90 transition-colors shadow-sm"
                 title="Start work block"

@@ -29,8 +29,8 @@ export function GoalPicker({ onNext, onBack }: GoalPickerProps) {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-1">
-        <h2 className="text-xl font-semibold tracking-tight">Set your daily focus target</h2>
+      <div className="space-y-1.5">
+        <h2 className="text-2xl font-semibold tracking-tight">Your daily focus target</h2>
         <p className="text-sm text-muted-foreground">How many hours of deep work do you aim for daily?</p>
       </div>
 
@@ -58,8 +58,8 @@ export function GoalPicker({ onNext, onBack }: GoalPickerProps) {
 
       {error && <p className="text-xs text-muted-foreground">{error}</p>}
 
-      <div className="flex items-center gap-4">
-        <Button onClick={handleContinue} disabled={isPending}>
+      <div className="flex items-center gap-4 pt-2">
+        <Button onClick={handleContinue} disabled={isPending} className="min-w-[120px]">
           {isPending ? 'Saving…' : 'Continue'}
         </Button>
         <button

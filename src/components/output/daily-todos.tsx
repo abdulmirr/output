@@ -25,6 +25,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { useTourTarget } from '@/components/tour/use-tour';
 
 interface DailyTodosProps {
   initialTodos: DailyTodo[];
@@ -146,6 +147,7 @@ export function DailyTodos({ initialTodos, today }: DailyTodosProps) {
   const [isOpen, setIsOpen] = useState(true);
 
   const dndId = useId();
+  const tourRef = useTourTarget('output.daily-todos');
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -259,7 +261,7 @@ export function DailyTodos({ initialTodos, today }: DailyTodosProps) {
   };
 
   return (
-    <div className="space-y-2">
+    <div ref={tourRef} className="space-y-2">
       <div className="relative">
         <button
           onClick={() => setIsOpen((o) => !o)}

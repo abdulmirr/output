@@ -46,3 +46,13 @@ create policy "Users can view own feedback"
 
 create index if not exists idx_feedback_user_created
   on public.feedback (user_id, created_at desc);
+
+-- ============================================
+-- Onboarding v2: personalization + product tour progress
+-- ============================================
+alter table public.profiles
+  add column if not exists preferred_name text,
+  add column if not exists focus_area text,
+  add column if not exists work_window text
+    check (work_window in ('mornings', 'afternoons', 'evenings', 'split', 'flexible')),
+  add column if not exists tour_progress jsonb not null default '{}'::jsonb;

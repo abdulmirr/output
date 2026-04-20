@@ -61,6 +61,15 @@ export interface DailyTodo {
   taskId: string | null; // linked task id, if any
 }
 
+export type WorkWindow = 'mornings' | 'afternoons' | 'evenings' | 'split' | 'flexible';
+export type TourStage = 'output' | 'tasks' | 'done';
+
+export interface TourProgress {
+  stage: TourStage;
+  step: number;
+  skipped: boolean;
+}
+
 export interface UserProfile {
   id: string;
   email: string;
@@ -73,4 +82,8 @@ export interface UserProfile {
   timezone: string | null;
   onboardingCompleted: boolean;
   hasCompletedFirstBlock: boolean;
+  preferredName: string | null;
+  focusArea: string | null;
+  workWindow: WorkWindow | null;
+  tourProgress: TourProgress;
 }

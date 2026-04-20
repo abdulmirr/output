@@ -1,58 +1,44 @@
 'use client';
 
 import { useState } from 'react';
-import { cn } from '@/lib/utils';
+import { WizardShell } from './wizard-shell';
+import { useWizardStep } from './hooks/use-wizard-step';
+import { WelcomeStep } from './steps/welcome-step';
+import { NameStep } from './steps/name-step';
 import { RolePicker } from './role-picker';
+import { FocusStep } from './steps/focus-step';
 import { GoalPicker } from './goal-picker';
-import { HowItWorks } from './how-it-works';
-
-type Step = 1 | 2 | 3;
+import { ReadyStep } from './steps/ready-step';
 
 interface OnboardingWizardProps {
   displayName: string | null;
+  preferredName: string | null;
 }
 
-export function OnboardingWizard({ displayName }: OnboardingWizardProps) {
-  const [step, setStep] = useState<Step>(1);
+const TOTAL_STEPS = 6;
 
-  const firstName = displayName?.split(' ')[0] ?? null;
+export function OnboardingWizard({ displayName, preferredName }: OnboardingWizardProps) {
+  const firstName = preferredName ?? displayName?.split(' ')[0] ?? null;
+  const [name, setName] = useState<string>(firstName ?? '');
+  const { step, direction, next, back } = useWizardStep(TOTAL_STEPS, 0);
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <span className="text-xl font-bold tracking-tight">output</span>
-        </div>
-        {step === 1 && (
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">
-              {firstName ? `Welcome, ${firstName}.` : 'Welcome.'}
-            </h1>
-            <p className="text-sm text-muted-foreground mt-1">Let&apos;s get you set up in 30 seconds.</p>
-          </div>
-        )}
-      </div>
-
-      {/* Progress dots */}
-      <div className="flex items-center gap-2">
-        {([1, 2, 3] as Step[]).map((s) => (
-          <div
-            key={s}
-            className={cn(
-              'h-1.5 rounded-full transition-all duration-300',
-              s === step ? 'w-6 bg-foreground' : s < step ? 'w-4 bg-foreground/40' : 'w-4 bg-muted-foreground/20'
-            )}
-          />
-        ))}
-      </div>
-
-      {/* Steps */}
-      <div key={step} className="animate-in fade-in slide-in-from-bottom-2 duration-200">
-        {step === 1 && <RolePicker onNext={() => setStep(2)} />}
-        {step === 2 && <GoalPicker onNext={() => setStep(3)} onBack={() => setStep(1)} />}
-        {step === 3 && <HowItWorks onBack={() => setStep(2)} />}
-      </div>
-    </div>
+    <WizardShell step={step} direction={direction} total={TOTAL_STEPS}>
+      {step === 0 && <WelcomeStep onNext={next} firstName={firstName} />}
+      {step === 1 && (
+        <NameStep
+          onNext={(n) => {
+            if (n) setName(n);
+            next();
+          }}
+          onBack={back}
+          initialName={name || firstName}
+        />
+      )}
+      {step === 2 && <RolePicker onNext={next} onBack={back} />}
+      {step === 3 && <FocusStep onNext={next} onBack={back} />}
+      {step === 4 && <GoalPicker onNext={next} onBack={back} />}
+      {step === 5 && <ReadyStep name={name} onBack={back} />}
+    </WizardShell>
   );
 }

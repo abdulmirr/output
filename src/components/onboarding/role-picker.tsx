@@ -18,12 +18,12 @@ const ROLES: { value: UserRole; label: string; icon: React.ReactNode }[] = [
 
 interface RolePickerProps {
   onNext: () => void;
+  onBack?: () => void;
 }
 
-export function RolePicker({ onNext }: RolePickerProps) {
+export function RolePicker({ onNext, onBack }: RolePickerProps) {
   const [selected, setSelected] = useState<UserRole | null>(null);
   const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
 
   const handleContinue = () => {
     if (!selected) {
@@ -31,18 +31,15 @@ export function RolePicker({ onNext }: RolePickerProps) {
       return;
     }
     startTransition(async () => {
-      const result = await saveRole(selected);
-      if (result?.error) {
-        setError("Couldn't save — you can update this in Settings later.");
-      }
+      await saveRole(selected);
       onNext();
     });
   };
 
   return (
     <div className="space-y-6">
-      <div className="space-y-1">
-        <h2 className="text-xl font-semibold tracking-tight">What best describes you?</h2>
+      <div className="space-y-1.5">
+        <h2 className="text-2xl font-semibold tracking-tight">What best describes you?</h2>
         <p className="text-sm text-muted-foreground">We&apos;ll tailor your experience.</p>
       </div>
 
@@ -65,18 +62,25 @@ export function RolePicker({ onNext }: RolePickerProps) {
         ))}
       </div>
 
-      {error && <p className="text-xs text-muted-foreground">{error}</p>}
-
-      <div className="flex items-center gap-4">
-        <Button onClick={handleContinue} disabled={isPending}>
+      <div className="flex items-center gap-4 pt-2">
+        <Button onClick={handleContinue} disabled={isPending} className="min-w-[120px]">
           {isPending ? 'Saving…' : 'Continue'}
         </Button>
-        <button
-          onClick={onNext}
-          className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-        >
-          Skip for now
-        </button>
+        {onBack ? (
+          <button
+            onClick={onBack}
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Back
+          </button>
+        ) : (
+          <button
+            onClick={onNext}
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Skip for now
+          </button>
+        )}
       </div>
     </div>
   );

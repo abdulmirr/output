@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useTourTarget } from '@/components/tour/use-tour';
 
 interface TaskTabBarProps {
   activeView: string;
@@ -54,6 +55,7 @@ export function TaskTabBar({ activeView, onViewChange }: TaskTabBarProps) {
   const { folders, tasks, addFolderOptimistic } = useTaskStore();
   const [isCreating, setIsCreating] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
+  const tourRef = useTourTarget('tasks.tab-bar');
 
   // Filter out "Today" and "This Week" — Inbox now handles sub-filtering
   const visibleDefaults = folders.filter(
@@ -86,7 +88,7 @@ export function TaskTabBar({ activeView, onViewChange }: TaskTabBarProps) {
   };
 
   return (
-    <div className="flex items-center gap-1 flex-wrap">
+    <div ref={tourRef} className="flex items-center gap-1 flex-wrap">
       {/* Default folders (Inbox, Today) */}
       {visibleDefaults.map((folder) => {
         const count = getCount(folder.id);
