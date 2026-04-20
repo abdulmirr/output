@@ -14,7 +14,7 @@ interface KeyboardShortcutsDialogProps {
 
 const shortcuts = [
   { keys: ['Cmd', 'Shift', 'O'], description: 'Start / show work block' },
-  { keys: ['Cmd', 'Shift', 'N'], description: 'Add a new task' },
+  { keys: ['Cmd', 'Shift', 'P'], description: 'Add a new task' },
   { keys: ['Cmd', '/'], description: 'Show keyboard shortcuts' },
   { keys: ['Esc'], description: 'Close overlay / minimize' },
   { keys: ['Enter'], description: 'Submit / confirm' },

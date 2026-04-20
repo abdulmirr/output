@@ -237,7 +237,7 @@ export function TasksPageClient({
                 + Add Task
               </button>
               <span className="absolute top-full right-0 mt-1.5 text-[11px] text-foreground/40 font-mono whitespace-nowrap">
-                Cmd+Shift+N
+                Cmd+Shift+P
               </span>
             </div>
           )}

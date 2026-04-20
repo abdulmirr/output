@@ -42,7 +42,7 @@ export function SettingsForm() {
         <div className="space-y-2">
           {[
             { keys: 'Cmd+Shift+O', description: 'Start / show work block' },
-            { keys: 'Cmd+Shift+N', description: 'Add a new task' },
+            { keys: 'Cmd+Shift+P', description: 'Add a new task' },
             { keys: 'Cmd+/', description: 'Show all shortcuts' },
             { keys: 'Esc', description: 'Close overlay / minimize' },
             { keys: 'Enter', description: 'Submit / start' },

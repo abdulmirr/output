@@ -12,7 +12,7 @@ export function TaskEmptyState({ folderName }: TaskEmptyStateProps) {
       <p className="text-xs text-muted-foreground mt-1">
         Press{' '}
         <kbd className="px-1 py-0.5 text-xs bg-muted rounded font-mono">
-          Cmd+Shift+N
+          Cmd+Shift+P
         </kbd>{' '}
         to add a task
       </p>
