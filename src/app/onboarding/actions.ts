@@ -153,7 +153,7 @@ export async function resetTour() {
     .update({ tour_progress: { stage: 'output', step: 0, skipped: false } })
     .eq('id', user.id);
 
-  if (error) return { error: `Could not reset tour: ${error.message}` };
+  if (error) return { error: 'Could not reset tour' };
   updateTag(TAG.profile);
   return { success: true };
 }
