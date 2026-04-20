@@ -116,7 +116,7 @@ export async function addManualBlock(data: {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Not authenticated' };
 
-  const { error } = await supabase.from('work_blocks').insert({
+  const { data: row, error } = await supabase.from('work_blocks').insert({
     user_id: user.id,
     title: validData.title,
     start_time: validData.startTime,
@@ -126,11 +126,11 @@ export async function addManualBlock(data: {
     status: 'completed',
     ...(validData.focusScore != null ? { focus_score: validData.focusScore } : {}),
     ...(validData.thoughts != null ? { thoughts: validData.thoughts } : {}),
-  });
+  }).select('id, created_at').single();
 
   if (error) return { error: error.message };
   invalidateBlocks();
-  return { success: true };
+  return { success: true, id: row.id as string, createdAt: row.created_at as string };
 }
 
 export async function updateDailyThoughts(date: string, thoughts: string) {
