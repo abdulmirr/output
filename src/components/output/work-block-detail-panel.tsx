@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useTransition } from 'react';
 import { X } from 'lucide-react';
-import { parseTimeInput, toDisplayLabel } from './time-picker-dropdown';
+import { parseTimeRange, toDisplayLabel } from './time-picker-dropdown';
 import { updateWorkBlock } from '@/app/(app)/output/actions';
 import { cn } from '@/lib/utils';
 import { formatDuration } from '@/lib/utils';
@@ -96,8 +96,7 @@ export function WorkBlockDetailPanel({ block, onClose }: WorkBlockDetailPanelPro
     return d.toISOString();
   };
 
-  const parsedStart = parseTimeInput(startInput);
-  const parsedEnd = parseTimeInput(endInput);
+  const { start: parsedStart, end: parsedEnd } = parseTimeRange(startInput, endInput);
 
   const computedDuration = (() => {
     if (!parsedStart || !parsedEnd) return null;

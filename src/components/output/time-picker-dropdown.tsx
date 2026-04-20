@@ -39,9 +39,11 @@ export function toDisplayLabel(hhmm: string): string {
 /**
  * Parse a free-form time string into "HH:MM" 24h format.
  * Accepts formats like: "11:02 am", "11:02am", "2:30 PM", "14:30", "9am", "9:5p", etc.
+ * If `periodHint` is provided and the input omits am/pm, the hint is applied
+ * (only for hour values 1–12 so 24h inputs still parse correctly).
  * Returns null if unparseable.
  */
-export function parseTimeInput(input: string): string | null {
+export function parseTimeInput(input: string, periodHint?: 'am' | 'pm'): string | null {
   const trimmed = input.trim().toLowerCase();
   if (!trimmed) return null;
 
@@ -53,9 +55,13 @@ export function parseTimeInput(input: string): string | null {
 
   let hours = parseInt(match[1], 10);
   const minutes = match[2] ? parseInt(match[2], 10) : 0;
-  const period = match[3];
+  let period = match[3];
 
   if (minutes < 0 || minutes > 59) return null;
+
+  if (!period && periodHint && hours >= 1 && hours <= 12) {
+    period = periodHint;
+  }
 
   if (period) {
     // 12-hour format
@@ -71,6 +77,49 @@ export function parseTimeInput(input: string): string | null {
   }
 
   return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+}
+
+/** Returns 'am' | 'pm' if the input has an explicit period marker, else null. */
+export function detectPeriod(input: string): 'am' | 'pm' | null {
+  const match = input.trim().toLowerCase().match(/(am|pm|a|p)$/);
+  if (!match) return null;
+  return match[1].startsWith('a') ? 'am' : 'pm';
+}
+
+/**
+ * Parse a start/end pair, inferring a missing am/pm from the other side.
+ * If the naive inference produces end <= start, tries the opposite period
+ * for the ambiguous side.
+ */
+export function parseTimeRange(
+  startInput: string,
+  endInput: string
+): { start: string | null; end: string | null } {
+  const startPeriod = detectPeriod(startInput);
+  const endPeriod = detectPeriod(endInput);
+
+  let start = parseTimeInput(startInput, endPeriod ?? undefined);
+  let end = parseTimeInput(endInput, startPeriod ?? undefined);
+
+  if (start && end) {
+    const toMins = (hhmm: string) => {
+      const [h, m] = hhmm.split(':').map(Number);
+      return h * 60 + m;
+    };
+    if (toMins(end) <= toMins(start)) {
+      if (!startPeriod && endPeriod) {
+        const opposite = endPeriod === 'am' ? 'pm' : 'am';
+        const alt = parseTimeInput(startInput, opposite);
+        if (alt && toMins(alt) < toMins(end)) start = alt;
+      } else if (!endPeriod && startPeriod) {
+        const opposite = startPeriod === 'am' ? 'pm' : 'am';
+        const alt = parseTimeInput(endInput, opposite);
+        if (alt && toMins(alt) > toMins(start)) end = alt;
+      }
+    }
+  }
+
+  return { start, end };
 }
 
 export function TimePickerDropdown({ value, onChange, label, compact }: TimePickerDropdownProps) {

@@ -2,7 +2,7 @@
 
 import { Portal } from '@/components/shared/portal';
 import { Button } from '@/components/ui/button';
-import { parseTimeInput, toDisplayLabel } from './time-picker-dropdown';
+import { parseTimeRange, toDisplayLabel } from './time-picker-dropdown';
 import { useState, useTransition } from 'react';
 import { addManualBlock } from '@/app/(app)/output/actions';
 import { useRouter } from 'next/navigation';
@@ -37,8 +37,7 @@ export function AddBlockDialog({ open, onOpenChange, date }: AddBlockDialogProps
 
   if (!open) return null;
 
-  const parsedStart = parseTimeInput(startInput);
-  const parsedEnd = parseTimeInput(endInput);
+  const { start: parsedStart, end: parsedEnd } = parseTimeRange(startInput, endInput);
 
   const durationSeconds = (() => {
     if (!parsedStart || !parsedEnd) return null;

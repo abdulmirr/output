@@ -5,7 +5,7 @@ import { Plus } from 'lucide-react';
 import { useRef, useState, useTransition, useOptimistic } from 'react';
 import { WorkBlockDetailPanel } from './work-block-detail-panel';
 import { addManualBlock, removeWorkBlock } from '@/app/(app)/output/actions';
-import { parseTimeInput } from './time-picker-dropdown';
+import { parseTimeRange } from './time-picker-dropdown';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import type { WorkBlock } from '@/lib/types';
@@ -53,8 +53,7 @@ export function OutputSection({ initialBlocks, date }: OutputSectionProps) {
   );
 
   const handleSaveNew = () => {
-    const parsedStart = parseTimeInput(startInput);
-    const parsedEnd = parseTimeInput(endInput);
+    const { start: parsedStart, end: parsedEnd } = parseTimeRange(startInput, endInput);
     if (!titleInput.trim() || !parsedStart || !parsedEnd) return;
 
     const base = date ? new Date(date + 'T12:00:00') : new Date();
