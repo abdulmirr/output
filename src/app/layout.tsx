@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Toaster } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 import Script from "next/script";
 import "./globals.css";
 
@@ -35,7 +35,7 @@ export default function RootLayout({
           }}
         />
         {children}
-        <Toaster position="bottom-right" />
+        <Toaster />
         <div id="portal-root" />
       </body>
     </html>

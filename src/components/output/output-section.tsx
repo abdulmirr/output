@@ -9,7 +9,7 @@ import { parseTimeRange } from './time-picker-dropdown';
 import { toast } from 'sonner';
 import type { WorkBlock } from '@/lib/types';
 import { formatDuration } from '@/lib/utils';
-import { useTourTarget, useTourAdvance } from '@/components/tour/use-tour';
+import { useTourTarget } from '@/components/tour/use-tour';
 
 interface OutputSectionProps {
   initialBlocks: WorkBlock[];
@@ -29,7 +29,6 @@ export function OutputSection({ initialBlocks, date }: OutputSectionProps) {
   const [editBlockId, setEditBlockId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const manualBtnRef = useTourTarget('output.manual-add-button');
-  const tourAdvance = useTourAdvance();
 
   const [blocks, setBlocks] = useState(initialBlocks);
 
@@ -250,10 +249,7 @@ export function OutputSection({ initialBlocks, date }: OutputSectionProps) {
       ) : (
         <button
           ref={manualBtnRef}
-          onClick={() => {
-            setIsAdding(true);
-            tourAdvance('output.manual-add-button');
-          }}
+          onClick={() => setIsAdding(true)}
           className="flex items-center justify-center w-6 h-6 rounded text-foreground/30 hover:text-foreground/60 transition-colors mt-2 -ml-1"
           title="Add block manually"
         >
