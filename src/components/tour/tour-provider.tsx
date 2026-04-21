@@ -19,6 +19,7 @@ export function TourProvider({ initial }: TourProviderProps) {
   const hydrated = useTourStore((s) => s.hydrated);
 
   useEffect(() => {
+    if (useTourStore.getState().hydrated) return;
     setProgress(initial);
   }, [initial, setProgress]);
 
