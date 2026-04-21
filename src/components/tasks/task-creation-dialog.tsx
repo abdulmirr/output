@@ -12,6 +12,8 @@ import { formatDate } from './date-dialog';
 import { X } from 'lucide-react';
 import type { Task } from '@/lib/types';
 import { useTourAdvance, useTourTarget } from '@/components/tour/use-tour';
+import { useTourStore } from '@/stores/tour-store';
+import { TASKS_STEPS } from '@/components/tour/steps';
 
 interface TaskCreationDialogProps {
   visible: boolean;
@@ -157,6 +159,16 @@ export function TaskCreationDialog({ visible, onClose, activeFolderId, editingTa
     }
   }, [visible, editingTask]);
 
+  const tourStage = useTourStore((s) => s.stage);
+  const tourStep = useTourStore((s) => s.step);
+  const tourSkipped = useTourStore((s) => s.skipped);
+  const tourDismissed = useTourStore((s) => s.sessionDismissed);
+  const tourSpotlightingDialog =
+    tourStage === 'tasks' &&
+    !tourSkipped &&
+    !tourDismissed &&
+    TASKS_STEPS[tourStep]?.targetId === 'tasks.detail-fields';
+
   if (!visible) return null;
 
   const isEditing = !!editingTask;
@@ -234,7 +246,10 @@ export function TaskCreationDialog({ visible, onClose, activeFolderId, editingTa
   return (
     <Portal>
       <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh]">
-        <div className="fixed inset-0 bg-black/40" onClick={handleReset} />
+        <div
+          className={tourSpotlightingDialog ? 'fixed inset-0' : 'fixed inset-0 bg-black/40'}
+          onClick={handleReset}
+        />
         <div ref={detailFieldsRef} className="relative z-10 w-[27rem] rounded-xl border border-border bg-background shadow-xl overflow-hidden">
           {/* Header — matches detail panel */}
           <div className="flex items-center justify-between px-5 pt-6 pb-4 border-b border-border/50">

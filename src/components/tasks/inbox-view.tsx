@@ -18,6 +18,7 @@ interface InboxViewProps {
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
   onOpenCreate: () => void;
+  onFirstRowInteract?: () => void;
 }
 
 function isSameDay(a: Date, b: Date) {
@@ -49,6 +50,7 @@ export function InboxView({
   onToggle,
   onDelete,
   onOpenCreate,
+  onFirstRowInteract,
 }: InboxViewProps) {
   const { tasks } = useTaskStore();
   const [filter, setFilter] = useState<InboxFilter>('all');
@@ -127,12 +129,14 @@ export function InboxView({
               }
             />
           )}
-          {filteredTasks.map((task) => (
+          {filteredTasks.map((task, i) => (
             <TaskItem
               key={task.id}
               task={task}
               onToggle={onToggle}
               onDelete={onDelete}
+              tourTargetId={i === 0 ? 'tasks.first-row' : undefined}
+              onInteract={i === 0 ? onFirstRowInteract : undefined}
             />
           ))}
           <div className="mt-2 -ml-1">

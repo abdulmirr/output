@@ -138,6 +138,10 @@ export function TasksPageClient({
     setShowCreateDialog(true);
   }, []);
 
+  const handleFirstRowInteract = useCallback(() => {
+    tourAdvance('tasks.first-row');
+  }, [tourAdvance]);
+
 
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
@@ -190,8 +194,10 @@ export function TasksPageClient({
           reordered.map((t, i) => ({ id: t.id, sortOrder: i }))
         );
       });
+
+      tourAdvance('tasks.first-row');
     }
-  }, [tasks, folders, activeView, updateTaskOptimistic, setTasksOrderOptimistic]);
+  }, [tasks, folders, activeView, updateTaskOptimistic, setTasksOrderOptimistic, tourAdvance]);
 
   const activeFolderName =
     activeView === 'completed'
@@ -239,10 +245,7 @@ export function TasksPageClient({
             <div className="relative">
               <button
                 ref={addBtnRef}
-                onClick={() => {
-                  handleOpenCreate();
-                  tourAdvance('tasks.add-button');
-                }}
+                onClick={handleOpenCreate}
                 className="rounded-lg bg-foreground text-background px-4 py-1.5 text-sm font-medium hover:bg-foreground/90 transition-colors shadow-sm"
                 title="Add task"
               >
@@ -265,6 +268,7 @@ export function TasksPageClient({
               onToggle={handleToggle}
               onDelete={handleDelete}
               onOpenCreate={handleOpenCreate}
+              onFirstRowInteract={handleFirstRowInteract}
             />
           ) : (
             <TaskList
@@ -274,6 +278,7 @@ export function TasksPageClient({
               onToggle={handleToggle}
               onDelete={handleDelete}
               onOpenCreate={handleOpenCreate}
+              onFirstRowInteract={handleFirstRowInteract}
             />
           )}
         </div>

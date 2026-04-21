@@ -24,10 +24,11 @@ export function useResolvedStep(): ResolvedStep | null {
  *   const ref = useTourTarget('output.start-block');
  *   <button ref={ref}>Start</button>
  */
-export function useTourTarget(id: string) {
+export function useTourTarget(id: string | null) {
   const register = useTourStore((s) => s.registerTarget);
   return useCallback(
     (el: HTMLElement | null) => {
+      if (!id) return;
       register(id, el);
     },
     [id, register]
@@ -39,23 +40,15 @@ export function useTourTarget(id: string) {
  * Safe to call from feature code — it's a no-op unless it's the right step.
  */
 export function useTourAdvance() {
-  const advance = useTourStore((s) => s.advance);
-  const stage = useTourStore((s) => s.stage);
-  const step = useTourStore((s) => s.step);
-  const skipped = useTourStore((s) => s.skipped);
-  const dismissed = useTourStore((s) => s.sessionDismissed);
-
-  return useCallback(
-    (targetId: string) => {
-      if (stage === 'done' || skipped || dismissed) return;
-      const list = stage === 'output' ? OUTPUT_STEPS : TASKS_STEPS;
-      const current = list[step];
-      if (!current) return;
-      if (current.targetId !== targetId) return;
-      advance();
-    },
-    [stage, step, skipped, dismissed, advance]
-  );
+  return useCallback((targetId: string) => {
+    const { stage, step, skipped, sessionDismissed, advance } = useTourStore.getState();
+    if (stage === 'done' || skipped || sessionDismissed) return;
+    const list = stage === 'output' ? OUTPUT_STEPS : TASKS_STEPS;
+    const current = list[step];
+    if (!current) return;
+    if (current.targetId !== targetId) return;
+    advance();
+  }, []);
 }
 
 /**

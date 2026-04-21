@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { createPortal } from 'react-dom';
 import { useTourStore } from '@/stores/tour-store';
 import { useResolvedStep } from './use-tour';
+import { OUTPUT_STEPS, TASKS_STEPS } from './steps';
 import { TourSpotlight } from './tour-spotlight';
 import { TourArrow } from './tour-arrow';
 import { TourCard } from './tour-card';
@@ -160,7 +161,13 @@ export function TourOverlay() {
     if (!step || step.advanceOn !== 'click-target') return;
     const el = targets.get(step.targetId);
     if (!el) return;
-    const handler = () => advance();
+    const targetId = step.targetId;
+    const handler = () => {
+      const s = useTourStore.getState();
+      const list = s.stage === 'output' ? OUTPUT_STEPS : TASKS_STEPS;
+      if (list[s.step]?.targetId !== targetId) return;
+      advance();
+    };
     el.addEventListener('click', handler);
     return () => el.removeEventListener('click', handler);
   }, [step, targets, targetsVersion, advance]);
@@ -187,6 +194,10 @@ export function TourOverlay() {
         router.push('/tasks');
         return;
       }
+      advance();
+      return;
+    }
+    if (step.advanceOn === 'action') {
       advance();
     }
   }, [step, advance, router]);

@@ -1,5 +1,6 @@
 'use client';
 
+import { useCallback } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { X, GripVertical, StickyNote } from 'lucide-react';
 import { Task } from '@/lib/types';
@@ -9,14 +10,17 @@ import { useTaskStore } from '@/stores/task-store';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { cn } from '@/lib/utils';
+import { useTourTarget } from '@/components/tour/use-tour';
 
 interface TaskItemProps {
   task: Task;
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
+  tourTargetId?: string;
+  onInteract?: () => void;
 }
 
-export function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
+export function TaskItem({ task, onToggle, onDelete, tourTargetId, onInteract }: TaskItemProps) {
   const isCompleted = task.status === 'completed';
   const { selectedTaskId, selectTask } = useTaskStore();
   const isSelected = selectedTaskId === task.id;
@@ -30,6 +34,15 @@ export function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
     isDragging,
   } = useSortable({ id: task.id });
 
+  const tourRef = useTourTarget(tourTargetId ?? null);
+  const composedRef = useCallback(
+    (el: HTMLElement | null) => {
+      setNodeRef(el);
+      tourRef(el);
+    },
+    [setNodeRef, tourRef]
+  );
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -42,9 +55,12 @@ export function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
 
   return (
     <div
-      ref={setNodeRef}
+      ref={composedRef}
       style={style}
-      onClick={() => selectTask(task.id)}
+      onClick={() => {
+        selectTask(task.id);
+        onInteract?.();
+      }}
       className={cn(
         'flex items-start group -ml-6 rounded-md transition-colors pr-1 py-1.5 cursor-pointer',
         isSelected && 'bg-neutral-100/70 dark:bg-muted/30',
@@ -66,7 +82,10 @@ export function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
       <span onClick={(e) => e.stopPropagation()}>
         <Checkbox
           checked={isCompleted}
-          onCheckedChange={() => onToggle(task.id)}
+          onCheckedChange={() => {
+            onToggle(task.id);
+            onInteract?.();
+          }}
           className="h-4 w-4 mr-2 mt-1"
         />
       </span>

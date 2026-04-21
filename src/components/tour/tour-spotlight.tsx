@@ -39,7 +39,7 @@ export function TourSpotlight({ rect, padding = 8, radius = 12 }: TourSpotlightP
         <rect
           width="100%"
           height="100%"
-          fill="rgba(0, 0, 0, 0.42)"
+          fill="rgba(0, 0, 0, 0.28)"
           mask="url(#tour-spotlight-mask)"
         />
         {/* thin highlight ring */}

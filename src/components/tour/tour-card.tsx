@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
 import type { ResolvedStep } from '@/lib/tour/tour-types';
@@ -14,10 +15,27 @@ interface TourCardProps {
 }
 
 export function TourCard({ step, position, onNext, onBack, onSkip, canGoBack }: TourCardProps) {
-  const { title, body, kbd, advanceOn, cta, isFinale, index, total } = step;
+  const { title, body, kbd, advanceOn, cta, isFinale, index, total, stage } = step;
+
+  const [escapeEnabled, setEscapeEnabled] = useState(false);
+  useEffect(() => {
+    setEscapeEnabled(false);
+    if (advanceOn !== 'action') return;
+    const t = setTimeout(() => setEscapeEnabled(true), 4000);
+    return () => clearTimeout(t);
+  }, [advanceOn, stage, index]);
+
+  const showEscape = advanceOn === 'action' && escapeEnabled;
   const primaryLabel =
-    cta ?? (advanceOn === 'click-target' ? 'Try it \u2193' : advanceOn === 'action' ? 'Waiting for you\u2026' : 'Next');
-  const primaryDisabled = advanceOn !== 'manual';
+    cta ??
+    (advanceOn === 'click-target'
+      ? 'Try it \u2193'
+      : advanceOn === 'action'
+        ? showEscape
+          ? 'Continue anyway'
+          : 'Waiting for you\u2026'
+        : 'Next');
+  const primaryDisabled = advanceOn !== 'manual' && !showEscape;
 
   return (
     <motion.div
