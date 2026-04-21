@@ -11,7 +11,7 @@ import { parseDuration, formatDuration } from './duration-dialog';
 import { formatDate } from './date-dialog';
 import { X } from 'lucide-react';
 import type { Task } from '@/lib/types';
-import { useTourAdvance } from '@/components/tour/use-tour';
+import { useTourAdvance, useTourTarget } from '@/components/tour/use-tour';
 
 interface TaskCreationDialogProps {
   visible: boolean;
@@ -135,6 +135,7 @@ export function TaskCreationDialog({ visible, onClose, activeFolderId, editingTa
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const tourAdvance = useTourAdvance();
+  const detailFieldsRef = useTourTarget('tasks.detail-fields');
 
   const { addTaskOptimistic, updateTaskOptimistic, folders } = useTaskStore();
 
@@ -234,7 +235,7 @@ export function TaskCreationDialog({ visible, onClose, activeFolderId, editingTa
     <Portal>
       <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh]">
         <div className="fixed inset-0 bg-black/40" onClick={handleReset} />
-        <div className="relative z-10 w-[27rem] rounded-xl border border-border bg-background shadow-xl overflow-hidden">
+        <div ref={detailFieldsRef} className="relative z-10 w-[27rem] rounded-xl border border-border bg-background shadow-xl overflow-hidden">
           {/* Header — matches detail panel */}
           <div className="flex items-center justify-between px-5 pt-6 pb-4 border-b border-border/50">
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
