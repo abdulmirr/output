@@ -45,10 +45,10 @@ export function OutputBlockCard({ block, onEdit, onDelete, showDuration, onToggl
   const focusScore = block.focusScore ?? null;
 
   return (
-    <div className="flex items-center gap-3 py-3.5 group hover:bg-foreground/[0.03] rounded-md px-2 -mx-2 transition-colors">
+    <div className="flex items-center gap-2 py-3.5 group hover:bg-foreground/[0.03] rounded-md px-2 -mx-2 transition-colors">
       {/* Time — default: duration (xxm), click to toggle to time range */}
       <div
-        className="text-[13px] text-muted-foreground font-mono w-36 shrink-0 translate-y-px whitespace-nowrap cursor-pointer hover:text-foreground transition-colors select-none"
+        className="text-[13px] text-muted-foreground font-mono w-32 shrink-0 translate-y-px whitespace-nowrap cursor-pointer hover:text-foreground transition-colors select-none"
         onClick={onToggleDuration}
         title="Click to toggle all time/duration"
       >
@@ -61,7 +61,7 @@ export function OutputBlockCard({ block, onEdit, onDelete, showDuration, onToggl
 
       {/* Focus rating — always present to keep title column aligned */}
       {/* Default: word label, click to toggle to number */}
-      <div className="w-24 shrink-0">
+      <div className="w-20 shrink-0">
         <button
           onClick={focusScore !== null ? onToggleRatingLabel : undefined}
           className={`text-sm font-mono select-none transition-colors ${
