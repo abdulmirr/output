@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Output
 
-## Getting Started
+A tool for tracking your actual output and building a deep work habit. You run timed work blocks, log what you got done, and review the shape of your week.
 
-First, run the development server:
+Live at [useoutput.app](https://useoutput.app) (or wherever you've deployed it).
+
+## Status
+
+**Maintenance paused.** I built this for myself and had a lot of fun with it, but I've moved on to [favorite](https://myfavoriteapp.com/). The code is here for anyone who wants to learn from it, fork it, or pick it up. PRs and issues may go unanswered — fork freely.
+
+## Stack
+
+- [Next.js 16](https://nextjs.org) (App Router)
+- React 19
+- TypeScript
+- [Tailwind CSS v4](https://tailwindcss.com)
+- [Supabase](https://supabase.com) — Postgres + Auth + RLS
+- Deployed on [Vercel](https://vercel.com)
+
+## Running it locally
+
+### 1. Prerequisites
+
+- Node 20+ (or [Bun](https://bun.sh))
+- A free Supabase project — create one at [supabase.com](https://supabase.com)
+
+### 2. Install
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/abdulmirr/output.git
+cd output
+npm install    # or: bun install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Set up the database
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+In your Supabase project, open the SQL Editor and run [`supabase-schema.sql`](./supabase-schema.sql). This creates every table, policy, and function the app needs.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+If you later pull updates that change the schema, apply [`supabase-migrations.sql`](./supabase-migrations.sql) incrementally.
 
-## Learn More
+### 4. Configure environment variables
 
-To learn more about Next.js, take a look at the following resources:
+Copy `.env.example` to `.env.local` and fill in the values from your Supabase project (Dashboard → Project Settings → API):
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+cp .env.example .env.local
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+NEXT_PUBLIC_SUPABASE_URL=https://<your-project>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+```
 
-## Deploy on Vercel
+The anon key is safe to expose on the client — Row-Level Security is what actually protects data.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 5. Run
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run dev    # or: bun dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+## Deploying
+
+Push the repo to Vercel and set the same three env vars under Project Settings → Environment Variables. Set `NEXT_PUBLIC_SITE_URL` to your production URL so OAuth and password-reset redirects land in the right place.
+
+## Project layout
+
+```
+src/
+  app/             # Next.js App Router routes
+    (app)/         # Authenticated app shell
+    (auth)/        # Login / signup / password reset
+  components/      # UI components
+  lib/
+    supabase/      # Supabase browser + server clients
+supabase-schema.sql       # Full schema — run this first
+supabase-migrations.sql   # Incremental migrations
+```
+
+## License
+
+[MIT](./LICENSE) — do what you want, no warranty. If you ship something cool with this, I'd love to see it.
