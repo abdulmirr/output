@@ -6,25 +6,6 @@ import { ArrowUp, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { submitFeedback } from './actions';
 
-const ROADMAP = [
-  {
-    title: 'Desktop app',
-    body: 'this unlocks ability to use keyboard shortcuts to start a block/add a task from anywhere. not possible with a web app.',
-  },
-  {
-    title: 'Mobile app',
-    body: "let's say you go gym or do some reading on your phone, i want you to be able to log that too.",
-  },
-  {
-    title: 'Blocking apps & websites',
-    body: "add links to block while you\u2019re in a work session. defend your focus at the OS level.",
-  },
-  {
-    title: 'AI',
-    body: 'claude mentor that analyzes your week and gives you advice/feedback based on what it observes. not sure how to approach this yet.',
-  },
-];
-
 export function FeedbackPageClient() {
   const [message, setMessage] = useState('');
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -64,32 +45,37 @@ export function FeedbackPageClient() {
         <p>hey, thank you so much for using output!</p>
 
         <p>
-          since i&rsquo;m a student and a new developer, i haven&rsquo;t gotten a
-          chance to make the app perfect yet. i built this tool for myself but
-          thought many people would benefit from tracking their actual work and
-          fostering a deep work habit.
+          i built this tool for myself but thought other people might benefit
+          from tracking their actual output and fostering a deep work habit.
         </p>
 
         <p>
-          i had a lot of fun building this &amp; want to continue working on it to
-          make it an amazing tool.
+          i had a lot of fun building this &amp; want to return back to it later
+          to make it an amazing tool. for now, i&rsquo;ll be moving on to work
+          on{' '}
+          <a
+            href="https://myfavoriteapp.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 decoration-foreground/30 hover:decoration-foreground/60"
+          >
+            favorite
+          </a>{' '}
+          to &ldquo;favorite&rdquo;
         </p>
 
         <p>
-          i&rsquo;m looking for honest feedback and what kind of direction to
-          take this app into. so i&rsquo;d appreciate any thoughts, feedback,
-          ideas or just what you liked/disliked about output so far below.
+          i&rsquo;m looking for honest feedback and what kind of direction this
+          app should go into. things i was thinking of adding next was a feature
+          to block certain links/apps when you&rsquo;re in a work block and an
+          ai mentor that analyzes your week and gives you advice/feedback based
+          on what it observes.
         </p>
 
         <p>
-          marketing ideas would be appreciated too. i&rsquo;m tryna get users
-          it&rsquo;s tough out here lol.
-        </p>
-
-        <p>
-          also if you know how to code and want to work on this project with me,
-          reach out pls!<br />
-          i have no idea what i&rsquo;m doing and would appreciate the help.
+          i&rsquo;d appreciate any thoughts, feedback, ideas or just what you
+          liked/disliked about output so far below, if it&rsquo;s even something
+          you would use.
         </p>
 
         <p>much love, stay locked in.</p>
@@ -184,25 +170,6 @@ export function FeedbackPageClient() {
             </p>
           )}
         </div>
-      </section>
-
-      {/* ROADMAP */}
-      <section className="space-y-3">
-        <h2 className="text-sm font-normal uppercase tracking-wider text-foreground/70">
-          On the roadmap
-        </h2>
-
-        <ul className="space-y-3">
-          {ROADMAP.map((item) => (
-            <li key={item.title} className="flex items-start gap-2">
-              <span className="mt-[0.35rem] h-1 w-1 shrink-0 rounded-full bg-foreground/40" />
-              <div>
-                <p className="text-xs font-mono text-foreground/70">{item.title}</p>
-                <p className="text-xs font-mono text-foreground/40">{item.body}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
       </section>
     </div>
   );
