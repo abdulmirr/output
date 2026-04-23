@@ -60,8 +60,8 @@ export function FeedbackPageClient() {
             className="underline underline-offset-2 decoration-foreground/30 hover:decoration-foreground/60"
           >
             favorite
-          </a>{' '}
-          to &ldquo;favorite&rdquo;
+          </a>
+          .
         </p>
 
         <p>
