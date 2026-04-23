@@ -57,7 +57,7 @@ export function FeedbackPageClient() {
             href="https://myfavoriteapp.com/"
             target="_blank"
             rel="noopener noreferrer"
-            className="underline underline-offset-2 decoration-foreground/30 hover:decoration-foreground/60"
+            className="font-medium text-foreground hover:text-foreground/70 transition-colors"
           >
             favorite
           </a>
@@ -80,7 +80,18 @@ export function FeedbackPageClient() {
 
         <p>much love, stay locked in.</p>
 
-        <p className="leading-tight">thanks,<br />abdul</p>
+        <p className="leading-tight">
+          thanks,
+          <br />
+          <a
+            href="https://abdulmir.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-foreground hover:text-foreground/70 transition-colors"
+          >
+            abdul
+          </a>
+        </p>
 
         <div className="pt-6 w-[40%]">
           <div className="relative w-full aspect-[4/3] overflow-hidden">
