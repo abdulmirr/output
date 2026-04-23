@@ -57,7 +57,7 @@ export function FeedbackPageClient() {
             href="https://myfavoriteapp.com/"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-medium text-foreground hover:text-foreground/70 transition-colors"
+            className="font-medium hover:opacity-80 transition-opacity"
           >
             favorite
           </a>
@@ -87,7 +87,7 @@ export function FeedbackPageClient() {
             href="https://abdulmir.com/"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-medium text-foreground hover:text-foreground/70 transition-colors"
+            className="font-medium hover:opacity-80 transition-opacity"
           >
             abdul
           </a>
