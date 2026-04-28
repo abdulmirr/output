@@ -24,6 +24,7 @@ export function OutputSection({ initialBlocks, date }: OutputSectionProps) {
   const [focusScore, setFocusScore] = useState<number | null>(null);
   const endRef = useRef<HTMLInputElement>(null);
   const titleRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLDivElement>(null);
   const [showDurations, setShowDurations] = useState(false);
   const [showRatingLabels, setShowRatingLabels] = useState(false);
   const [editBlockId, setEditBlockId] = useState<string | null>(null);
@@ -36,6 +37,19 @@ export function OutputSection({ initialBlocks, date }: OutputSectionProps) {
   useEffect(() => {
     if (!isPending) setBlocks(initialBlocks);
   }, [initialBlocks]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Close the add form on outside click only when nothing has been entered
+  useEffect(() => {
+    if (!isAdding) return;
+    const handler = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (formRef.current?.contains(target)) return;
+      if (titleInput.trim() || startInput.trim() || endInput.trim()) return;
+      resetAdd();
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [isAdding, titleInput, startInput, endInput]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const sortByTime = (arr: WorkBlock[]) =>
     [...arr].sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
@@ -176,6 +190,7 @@ export function OutputSection({ initialBlocks, date }: OutputSectionProps) {
 
       {isAdding ? (
         <div
+          ref={formRef}
           className="mt-2 -ml-1 pl-1 space-y-2"
         >
           <input
@@ -188,9 +203,6 @@ export function OutputSection({ initialBlocks, date }: OutputSectionProps) {
                 handleSaveNew();
               }
               if (e.key === 'Escape') resetAdd();
-            }}
-            onBlur={() => {
-              if (!startInput && !endInput && !titleInput) resetAdd();
             }}
             placeholder="What did you work on?"
             className="w-full text-sm bg-transparent outline-none border-b border-border/40 focus:border-border pb-0.5 placeholder:text-muted-foreground/40"
