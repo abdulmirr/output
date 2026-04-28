@@ -49,18 +49,30 @@ export function OutputSection({ initialBlocks, date }: OutputSectionProps) {
   };
 
   const handleSaveNew = () => {
+    if (!titleInput.trim()) return;
+
+    const hasTimeInput = !!startInput.trim() || !!endInput.trim();
     const { start: parsedStart, end: parsedEnd } = parseTimeRange(startInput, endInput);
-    if (!titleInput.trim() || !parsedStart || !parsedEnd) return;
+
+    if (hasTimeInput && (!parsedStart || !parsedEnd)) return;
 
     const base = date ? new Date(date + 'T12:00:00') : new Date();
-    const [sh, sm] = parsedStart.split(':').map(Number);
-    const [eh, em] = parsedEnd.split(':').map(Number);
-    const start = new Date(base.getFullYear(), base.getMonth(), base.getDate(), sh, sm);
-    const end = new Date(base.getFullYear(), base.getMonth(), base.getDate(), eh, em);
 
-    if (end <= start) {
-      toast.error('End time must be after start time');
-      return;
+    let start: Date;
+    let end: Date | null = null;
+
+    if (parsedStart && parsedEnd) {
+      const [sh, sm] = parsedStart.split(':').map(Number);
+      const [eh, em] = parsedEnd.split(':').map(Number);
+      start = new Date(base.getFullYear(), base.getMonth(), base.getDate(), sh, sm);
+      end = new Date(base.getFullYear(), base.getMonth(), base.getDate(), eh, em);
+
+      if (end <= start) {
+        toast.error('End time must be after start time');
+        return;
+      }
+    } else {
+      start = new Date(base.getFullYear(), base.getMonth(), base.getDate(), 12, 0);
     }
 
     const title = titleInput.trim();
@@ -71,7 +83,7 @@ export function OutputSection({ initialBlocks, date }: OutputSectionProps) {
       title,
       startTime: start,
       endTime: end,
-      duration: Math.round((end.getTime() - start.getTime()) / 1000),
+      duration: end ? Math.round((end.getTime() - start.getTime()) / 1000) : 0,
       type: 'stopwatch',
       plannedDuration: null,
       focusScore: score,
@@ -88,7 +100,7 @@ export function OutputSection({ initialBlocks, date }: OutputSectionProps) {
       const result = await addManualBlock({
         title,
         startTime: start.toISOString(),
-        endTime: end.toISOString(),
+        endTime: end ? end.toISOString() : null,
         focusScore: score,
         thoughts: null,
       });
@@ -166,38 +178,6 @@ export function OutputSection({ initialBlocks, date }: OutputSectionProps) {
         <div
           className="mt-2 -ml-1 pl-1 space-y-2"
         >
-          <div className="flex items-center gap-2">
-          <input
-            value={startInput}
-            onChange={(e) => setStartInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-                endRef.current?.focus();
-              }
-              if (e.key === 'Escape') resetAdd();
-            }}
-            placeholder="Start (9am)"
-            className="w-24 text-sm bg-transparent outline-none border-b border-border/40 focus:border-border pb-0.5 placeholder:text-muted-foreground/40"
-            autoFocus
-            autoComplete="off"
-          />
-          <span className="text-muted-foreground/40 text-sm">→</span>
-          <input
-            ref={endRef}
-            value={endInput}
-            onChange={(e) => setEndInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-                titleRef.current?.focus();
-              }
-              if (e.key === 'Escape') resetAdd();
-            }}
-            placeholder="End (11am)"
-            className="w-24 text-sm bg-transparent outline-none border-b border-border/40 focus:border-border pb-0.5 placeholder:text-muted-foreground/40"
-            autoComplete="off"
-          />
           <input
             ref={titleRef}
             value={titleInput}
@@ -213,37 +193,67 @@ export function OutputSection({ initialBlocks, date }: OutputSectionProps) {
               if (!startInput && !endInput && !titleInput) resetAdd();
             }}
             placeholder="What did you work on?"
-            className="flex-1 text-sm bg-transparent outline-none border-b border-border/40 focus:border-border pb-0.5 placeholder:text-muted-foreground/40"
+            className="w-full text-sm bg-transparent outline-none border-b border-border/40 focus:border-border pb-0.5 placeholder:text-muted-foreground/40"
+            autoFocus
             autoComplete="off"
           />
-          </div>
-          <div className="flex items-center gap-1.5 pl-1 text-xs text-muted-foreground">
-            <span className="mr-1">Focus:</span>
-            {[1, 2, 3, 4, 5].map((n) => (
-              <button
-                key={n}
-                type="button"
-                onClick={() => setFocusScore(n)}
-                className={`px-1.5 py-0.5 rounded font-mono transition-colors ${
-                  focusScore === n
-                    ? 'bg-foreground/[0.06] text-foreground/60'
-                    : 'text-foreground/30 hover:text-foreground/60'
-                }`}
-                title={`Press ${n}`}
-              >
-                {n}
-              </button>
-            ))}
-            {focusScore !== null && (
-              <button
-                type="button"
-                onClick={() => setFocusScore(null)}
-                className="ml-1 text-muted-foreground/50 hover:text-foreground"
-              >
-                clear
-              </button>
-            )}
-            <span className="ml-auto text-muted-foreground/40">press 1–5</span>
+          <div className="flex items-center gap-2">
+            <input
+              value={startInput}
+              onChange={(e) => setStartInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  endRef.current?.focus();
+                }
+                if (e.key === 'Escape') resetAdd();
+              }}
+              placeholder="Start (9am)"
+              className="w-24 text-sm bg-transparent outline-none border-b border-border/40 focus:border-border pb-0.5 placeholder:text-muted-foreground/40"
+              autoComplete="off"
+            />
+            <span className="text-muted-foreground/40 text-sm">→</span>
+            <input
+              ref={endRef}
+              value={endInput}
+              onChange={(e) => setEndInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleSaveNew();
+                }
+                if (e.key === 'Escape') resetAdd();
+              }}
+              placeholder="End (11am)"
+              className="w-24 text-sm bg-transparent outline-none border-b border-border/40 focus:border-border pb-0.5 placeholder:text-muted-foreground/40"
+              autoComplete="off"
+            />
+            <div className="ml-auto flex items-center gap-1.5 text-xs text-muted-foreground">
+              <span className="mr-1">Focus:</span>
+              {[1, 2, 3, 4, 5].map((n) => (
+                <button
+                  key={n}
+                  type="button"
+                  onClick={() => setFocusScore(n)}
+                  className={`px-1.5 py-0.5 rounded font-mono transition-colors ${
+                    focusScore === n
+                      ? 'bg-foreground/[0.06] text-foreground/60'
+                      : 'text-foreground/30 hover:text-foreground/60'
+                  }`}
+                >
+                  {n}
+                </button>
+              ))}
+              {focusScore !== null && (
+                <button
+                  type="button"
+                  onClick={() => setFocusScore(null)}
+                  className="ml-1 text-muted-foreground/50 hover:text-foreground"
+                >
+                  clear
+                </button>
+              )}
+            </div>
           </div>
         </div>
       ) : (

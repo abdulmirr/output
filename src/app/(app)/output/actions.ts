@@ -41,7 +41,7 @@ const SaveWorkBlockSchema = z.object({
 const AddManualBlockSchema = z.object({
   title: z.string().min(1, 'Title is required').max(500),
   startTime: ISO_DATETIME,
-  endTime: ISO_DATETIME,
+  endTime: ISO_DATETIME.nullable().optional(),
   focusScore: z.number().int().min(1).max(5).nullable().optional(),
   thoughts: z.string().max(5000).nullable().optional(),
 });
@@ -97,7 +97,7 @@ export async function saveWorkBlock(block: {
 export async function addManualBlock(data: {
   title: string;
   startTime: string;
-  endTime: string;
+  endTime?: string | null;
   focusScore?: number | null;
   thoughts?: string | null;
 }) {
@@ -106,11 +106,14 @@ export async function addManualBlock(data: {
 
   const validData = parsed.data;
   const start = new Date(validData.startTime);
-  const end = new Date(validData.endTime);
-  if (end <= start) return { error: 'End time must be after start time' };
+  const end = validData.endTime ? new Date(validData.endTime) : null;
 
-  const duration = Math.floor((end.getTime() - start.getTime()) / 1000);
-  if (duration > MAX_BLOCK_DURATION) return { error: 'Block duration cannot exceed 12 hours' };
+  let duration = 0;
+  if (end) {
+    if (end <= start) return { error: 'End time must be after start time' };
+    duration = Math.floor((end.getTime() - start.getTime()) / 1000);
+    if (duration > MAX_BLOCK_DURATION) return { error: 'Block duration cannot exceed 12 hours' };
+  }
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -120,7 +123,7 @@ export async function addManualBlock(data: {
     user_id: user.id,
     title: validData.title,
     start_time: validData.startTime,
-    end_time: validData.endTime,
+    end_time: validData.endTime ?? null,
     duration,
     type: 'stopwatch',
     status: 'completed',

@@ -56,7 +56,9 @@ export function OutputBlockCard({ block, onEdit, onDelete, showDuration, onToggl
           ? (!showDuration
               ? `${formatDuration(block.duration)}${block.type === 'timer' ? ' (timer)' : ''}`
               : formatMinimalTimeRange(block.startTime, block.endTime))
-          : 'In progress'}
+          : block.status === 'completed'
+            ? '—'
+            : 'In progress'}
       </div>
 
       {/* Focus rating — always present to keep title column aligned */}
